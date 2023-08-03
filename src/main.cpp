@@ -6,56 +6,40 @@ using namespace okapi;
 
 bool driving;
 
-double flywheel_speed;
-double target_speed;
-double flywheel_voltage;
-
-int smoothing = 10;
-double speeds[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-double angle_error = 0;
-bool last_turn_direction;
-
-double intake_voltage;
-bool changing = false;
-double speed = 20;
-
 bool r = true;
 bool l = false;
 
 int program;
 
-bool flywheel_idle;
-bool angled_up = false;
-
 double final_speed = 0;
 
-pros::Motor left1(3);
-pros::Motor left2(11);
-pros::Motor left3(10);
-pros::Motor right1(-5);
-pros::Motor right2(-18);
-pros::Motor right3(-4);
+pros::Motor left1(4);
+pros::Motor left2(20);
+pros::Motor left3(18);
+pros::Motor right1(3);
+pros::Motor right2(13);
+pros::Motor right3(16);
 
 pros::MotorGroup left_drive({left1, left2, left3});
 pros::MotorGroup right_drive({right1, right2, right3});
 
+
 lemlib::Drivetrain_t drivetrain {
 	&left_drive,
 	&right_drive,
-	14.5,
+	15.25,
 	2.75,
 	600
 };
 
-pros::ADIEncoder left_tracker('A', 'B', true);
-pros::ADIEncoder right_tracker('C', 'D', false);
+pros::ADIEncoder left_tracker('C', 'D', true);
+pros::ADIEncoder right_tracker('A', 'B', true);
 pros::ADIEncoder back_tracker('E', 'F', false);
 pros::IMU inertial_p(16);
 
-lemlib::TrackingWheel left_tracking_wheel(&left_tracker, 2.75, -6.0);
-lemlib::TrackingWheel right_tracking_wheel(&right_tracker, 2.75, 6.0);
-lemlib::TrackingWheel back_tracking_wheel(&back_tracker, 2.75, 4.5);
+lemlib::TrackingWheel left_tracking_wheel(&left_tracker, 2.75, -5.0 * 184 / 180);
+lemlib::TrackingWheel right_tracking_wheel(&right_tracker, 2.75, 5.0 * 184 / 180);
+lemlib::TrackingWheel back_tracking_wheel(&back_tracker, 2.75, 5.125);
 
 lemlib::OdomSensors_t sensors {
 	&left_tracking_wheel,
@@ -70,23 +54,19 @@ lemlib::ChassisController_t angularController {4, 40, 1, 100, 3, 500, 40};
 
 lemlib::Chassis chassis_l(drivetrain, lateralController, angularController, sensors);
 
-std::shared_ptr<okapi::ChassisController> chassis = ChassisControllerBuilder().withMotors({3, -11, -10}, {-5, 18, 4}).build();
+//std::shared_ptr<okapi::ChassisController> chassis = ChassisControllerBuilder().withMotors({4, 20, 18}, {-3, -11, -16}).build();
     
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize(void) {
+void initialize(void) {/*
 	IMU inertial(16, IMUAxes::z);
 	IMU inertial2(12, IMUAxes::z);
 	IMU inertial3(19, IMUAxes::z);
 
-	pros::Task run_intake_handler(intake_handler);
-	//pros::Task grapher_task(grapher);
-	/*
 	inertial.calibrate();
 	inertial2.calibrate();
 	inertial3.calibrate();
@@ -94,6 +74,8 @@ void initialize(void) {
 	while (inertial.isCalibrating() || inertial2.isCalibrating() || inertial3.isCalibrating()) {
 		pros::delay(200);
 	}*/
+	chassis_l.calibrate();
+	pros::delay(3000);
 }
 
 /**
@@ -130,19 +112,13 @@ void autonomous(void) {
 
 	bool driving = false;
 
-	pros::Task flywheel_auton(flywheel_task);
-
 	if (program == 0 || program == 1) {
 		right_auton();
 	} else if (program == 2 || program == 3) {
 		left_auton();
 	} else if (program == 4) {
 		skills();
-	} else if (program == 5 || program == 6) {
-		//run bozo code here
-	} else if (program == 7) {
 	}
-	flywheel_auton.suspend();
 }
 
 /**
@@ -160,13 +136,13 @@ void autonomous(void) {
  */
 void opcontrol(void) {
 	driving = true;
-
-	pros::Task grapher_task(grapher);
-	pros::Task run_indexer(indexer_task);
-	pros::Task run_intake(intake_task);
-	pros::Task run_catapults(catapults_task);
 	pros::Task run_drive(drive_task);
-	pros::Task run_angle_changer(angle_changer_task);
 
-	driving = true;
+	while (true) {
+		pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f, %f", chassis_l.getPose(true).x, chassis_l.getPose(true).y);
+		pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Angle: %f deg", chassis_l.getPose(false).theta);
+		pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Encoders: L - %d, R - %d", left_tracker.get_value(), right_tracker.get_value());
+		pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Center: %d", back_tracker.get_value());
+		pros::delay(100);
+	}
 }

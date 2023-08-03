@@ -51,21 +51,6 @@ double sign(double x) {
   }
 }
 
-void shift(void) {
-  for (int i = 0; i < smoothing - 1; i++) {
-    speeds[i] = speeds[i + 1];
-  }
-  speeds[smoothing - 1] = speeds[smoothing - 2];
-}
-
-double average_speed(void) {
-  double sum = 0;
-  for (int i = 0; i < smoothing; i++) {
-    sum += speeds[i] * (i + 1);
-  }
-  return sum / ((smoothing * (smoothing + 1.0)) / 2.0);
-}
-
 double circle(double radius, double value) {
   return sqrt(radius * radius - value * value);
 }
@@ -73,7 +58,7 @@ double circle(double radius, double value) {
 double quadratic_profile(double initial, double final, double maximum, double position, bool inverted) {
   double n = 0;
   const double f = 1.5; //sharpness of velocity curve, roughly equivalent to slew rate
-  const double degree = 3.6; //sharpness of deceleration curve
+  const double degree = 1; //sharpness of deceleration curve
   double p = 0;
   double A = 0;
   double B = 0;
@@ -83,6 +68,8 @@ double quadratic_profile(double initial, double final, double maximum, double po
 
   if (position < 0) {
     pos = 0;
+  } else if (position > 1) {
+    pos = 1;
   }
 
   if (final < initial) {

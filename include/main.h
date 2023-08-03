@@ -42,43 +42,19 @@
 #include "okapi/api.hpp"
 #include "lemlib/api.hpp"
 //#include "pros/api_legacy.h"
-#include "auton/straight.hpp"
-#include "auton/turns.hpp"
-#include "auton/intake.hpp"
-#include "auton/flywheel.hpp"
 #include "auton/autons.hpp"
-#include "auton/pneumatics.hpp"
 
-#include "driver/intake.hpp"
-#include "driver/flywheel.hpp"
-#include "driver/pneumatics.hpp"
 #include "driver/drive.hpp"
 
 #include "functions.hpp"
 #include "devices.hpp"
 
 extern bool driving;
-extern double flywheel_speed;
-extern double target_speed;
-extern double flywheel_voltage;
-
-extern int smoothing;
-extern double speeds[];
-
-extern double angle_error;
-extern bool last_turn_direction;
 
 extern bool r;
 extern bool l;
 
 extern int program;
-
-extern double intake_voltage;
-extern bool changing;
-extern double speed;
-
-extern bool flywheel_idle;
-extern bool angled_up;
 
 extern double final_speed;
 

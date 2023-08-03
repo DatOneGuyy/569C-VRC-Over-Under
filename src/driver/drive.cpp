@@ -6,23 +6,14 @@ using namespace okapi;
 
 void drive_task(void*) {
 	Controller controller;
-
 	double left, right;
-	
-	IMU inertial(16, IMUAxes::z);
-	IMU inertial2(12, IMUAxes::z);
-	IMU inertial3(19, IMUAxes::z);
-	inertial.reset(0);
-	inertial.reset(0);
-	inertial.reset(0);
 
 	std::shared_ptr<ChassisController> drive =
 		ChassisControllerBuilder()
-			.withMotors({3, -11, -10}, {-5, 18, 4})
-			.withDimensions({AbstractMotor::gearset::blue, (60.0 / 84.0)}, {{4.125_in, 16_in}, imev5BlueTPR})
+			.withMotors({4, 20, 18}, {-3, -13, -16})
+			.withDimensions({AbstractMotor::gearset::blue, 1}, {{2.75_in, 15.25_in}, imev5BlueTPR})
 			.build();
-
-	drive->getModel()->setBrakeMode(AbstractMotor::brakeMode::brake);
+	drive->getModel()->setBrakeMode(AbstractMotor::brakeMode::coast);
 
 	while (true) {
 		left = controller.getAnalog(ControllerAnalog::leftY);
@@ -30,6 +21,6 @@ void drive_task(void*) {
 
 		drive->getModel()->tank(controller_map(left), controller_map(right));
 	
-		pros::delay(3);
+		pros::delay(10);
 	}
 }

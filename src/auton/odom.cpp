@@ -10,25 +10,8 @@ void start_odom(void) {
     IMU inertial(16, IMUAxes::z);
 	IMU inertial2(12, IMUAxes::z);
 	IMU inertial3(19, IMUAxes::z);
-    /*
-    chassis = ChassisControllerBuilder()
-        .withMotors({3, -11, -10}, {-5, 18, 4})
-        .withDimensions(AbstractMotor::gearset::blue, {{2.75_in, 14.5_in}, imev5BlueTPR})
-        .withSensors(
-            ADIEncoder{'A', 'B'},
-            ADIEncoder{'C', 'D', true},
-            ADIEncoder{'E', 'F'}
-        )
-        .withOdometry({{2.75_in, 11.5_in, 3_in, 2.75_in}, quadEncoderTPR})
-        .buildOdometry();*/
-        
-       /*
-        Create odometry chassis with external linkage
-        2.75" wheels, 14.5" track width, 600rpm
-        2.75" tracking wheels, 11.5" track width, 3" offset from tracking center
-        */
 
-    chassis_l.setPose(0, 0, pi, true);
+    chassis_l.setPose(0, 0, 0, true);
 
 	//chassis->setDefaultStateMode(StateMode::CARTESIAN); //Cartesian coordinate tracking, right: +x, forward: +y
 	//chassis->setState({0_in, 0_in, 0_deg}); //Begin facing forward
@@ -42,9 +25,9 @@ void start_odom(void) {
 void drive_to(double target_x, double target_y, double target_speed, bool backwards, double threshold, double kp_angle, double angle_threshold) {    
     const double pi = 3.1415926535897932384626433832795;
 
-    double x = chassis_l.getPose().x; //Coordinates
+    double x = -chassis_l.getPose().x; //Coordinates
     double y = chassis_l.getPose().y;
-    double angle = chassis_l.getPose().theta; //Absolute angle, degrees, counterclockwise is positive, [-pi, pi]
+    double angle = chassis_l.getPose(true).theta + pi / 2; //Absolute angle, degrees, counterclockwise is positive, [-pi, pi]
     const double distance = dist(target_x, target_y, x, y); //Euclidean distance to target from starting position
     const int sign = backwards ? -1 : 1; //-1 for backwards, 1 for forwards, used to reverse movement direction
 
@@ -65,10 +48,19 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
     double left_power = 0; //Final power sent to the motors, [-12000, 12000]
     double right_power = 0;
 
+    pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f, %f", x, y);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Angle: %f rad, %f deg", angle, angle * 180 / pi);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Error: %f, %f deg", distance_error, angle_error);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Base Voltage: %f", base_voltage);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Turn Voltage: %f", turn_voltage);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Distance Error: %f", distance_error);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Quadratic Profile: %f", quadratic_profile(fmax(final_speed, 0.1), target_speed, 1.0, position, backwards));
+    pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Position: %f", position);
+
     while (distance_error > threshold) {
-        x = chassis_l.getPose().x; //Update values
+        x = -chassis_l.getPose().x; //Update values
         y = chassis_l.getPose().y;
-        angle = transform_angle(-chassis_l.getPose().theta); //Update angle and remap to [-pi, pi]
+        angle = transform_angle(chassis_l.getPose(true).theta + pi / 2); //Update angle and remap to [-pi, pi]
 
         /*
         * Start with inverse tangent of target point, finding the angle from the x-axis to the target
@@ -76,9 +68,12 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
         * Modify the target angle by pi radians if backwards is active to set target to the back
         * If backwards is false, then multiplier is 0 and is ignored
         */
-        angle_error = atan2(target_y, target_x) - angle; //Subtract to find error
+
+        angle_error = atan2(target_y - y, target_x - x) - angle; //Subtract to find error
         angle_error = transform_angle(angle_error); //Remap to [-pi, pi]
         angle_error = transform_angle(angle_error + pi * backwards); //If backwards is true then modify target angle
+        angle_error *= 1; //Invert so that positive angle requires a counterclockwise turn
+
         /*
         * transform_angle() can be composed with itself without making changes so the value is not modified if backwards
         * is set to false
@@ -92,7 +87,11 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
         * Since not all movmeents end with a target speed of 0, the loop also ends early if over 50% of the distance
         * has been traveled and the difference between the actual and target voltage is less than 0.5%
         */
-        if ((fabs(position - past_position) < 0.005 || fabs(base_voltage)) && position > 0.5) { 
+
+        if ((fabs(position - past_position) < 0.005 || fabs(base_voltage)) < 0.05 && position > 0.5) { 
+            pros::screen::print(pros::E_TEXT_MEDIUM, 9, "exited");
+            left_drive.move_velocity(0);
+            right_drive.move_velocity(0);
             break;
         }
         
@@ -103,8 +102,10 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
         * Base voltage is 0 if the angle error is less than the threshold, forcing the robot to turn on a point
         * when off by a large angle instead of making a wider arc
         */
-        base_voltage = (fabs(angle_error) < angle_threshold) * quadratic_profile(fmax(final_speed, 0.35), target_speed, 1.0, position, backwards);
+        
+        base_voltage = (fabs(angle_error) < angle_threshold) * quadratic_profile(fmax(final_speed, 1), target_speed, 1.0, position, backwards);
         turn_voltage = kp_angle * angle_error * circle(1, position) + kd_angle * (past_angle_error - angle_error);
+        
         /*
         * Power is base power ± turn modifier
         * Turn modifier uses a PD controller for angle
@@ -129,18 +130,22 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
         * Adding the kp and kd terms also means that the expression is no longer bounded by [-1.0, 1.0] so it needs to
         * be constrained again
         */
-        left_power = c(-1, 1, ptv(base_voltage - turn_voltage)) * 100;
-        right_power = c(-1, 1, ptv(base_voltage + turn_voltage)) * 100;
-        chassis->getModel()->tank(left_power, right_power); //Standard tank drive input
+        
+        left_power = ptv(c(-1, 1, base_voltage - turn_voltage) * 100);
+        right_power = -ptv(c(-1, 1, base_voltage + turn_voltage) * 100);
+        left_drive.move_voltage(left_power);
+        right_drive.move_voltage(right_power);
 
         pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f, %f", x, y);
         pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Angle: %f rad, %f deg", angle, angle * 180 / pi);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Error: %f, %f deg", distance_error, angle_error);
+        pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Error: %f, %f deg", distance_error, angle_error * 180 / pi);
         pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Base Voltage: %f", base_voltage);
         pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Turn Voltage: %f", turn_voltage);
         pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Distance Error: %f", distance_error);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Quadratic Profile: %f", quadratic_profile(fmax(final_speed, 0.35), target_speed, 1.0, position, backwards));
-        pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Position position: %f", position);
+        pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Quadratic Profile: %f", quadratic_profile(fmax(final_speed, 0.1), target_speed, 1.0, position, backwards));
+        pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Position: %f", position);
+        pros::screen::print(pros::E_TEXT_MEDIUM, 8, "Power: L - %f, R - %f", left_power, right_power);
+
         if (isnan(turn_voltage) || isnan(base_voltage)) {
             pros::screen::print(pros::E_TEXT_MEDIUM, 8, "not a number :skull:");
             break;
@@ -154,10 +159,13 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
     //Set final speed once loop is exited to the target speed
     //If the final speed is zero, do a full stop instead of coasting
     if (final_speed) {
-        chassis->getModel()->tank(ptv(target_speed * 100), ptv(target_speed * 100));
+        left_drive.move_voltage(ptv(target_speed * 100));
+        right_drive.move_voltage(ptv(target_speed * 100));
     } else {
-        chassis->getModel()->stop();
+        left_drive.move_velocity(0);
+        right_drive.move_velocity(0);
     } 
+
     final_speed = target_speed; //Update for the next movement
 }
 
@@ -167,6 +175,7 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
 * Needs to be tested to see if it is more accurate to just turn using the odometry
 * If the inertial is better
 */
+
 void turn_to(double target_angle, double slew_rate, double threshold, double timeout, int threshold_time) {
     IMU inertial(16, IMUAxes::z);
 	IMU inertial2(12, IMUAxes::z);
@@ -203,9 +212,11 @@ void turn_to(double target_angle, double slew_rate, double threshold, double tim
 		power = c(-100, 100, power);
 
         if (turn_direction == l) {
-		    chassis->getModel()->tank(-power, power);
+		    left_drive.move_voltage(ptv(power));
+            right_drive.move_voltage(ptv(-power));
         } else {
-            chassis->getModel()->tank(power, -power);
+            left_drive.move_voltage(ptv(-power));
+            right_drive.move_voltage(ptv(power));
         }
 
 		if (fabs(error) < threshold || fabs(error - past_error) < 0.1) {
@@ -225,5 +236,6 @@ void turn_to(double target_angle, double slew_rate, double threshold, double tim
 		pros::delay(step);
 	}
     
-    chassis->getModel()->stop();
+    left_drive.move_velocity(0);
+    right_drive.move_velocity(0);
 }

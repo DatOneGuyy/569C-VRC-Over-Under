@@ -12,7 +12,7 @@ void clear_screen(void) {
 
 void right_auton(void) {
 	start_odom();
-	drive_to(0, 1, 0);
+	drive_to(0, 70);
 }
 
 void left_auton(void) {
