@@ -21,6 +21,6 @@ void drive_task(void*) {
 
 		drive->getModel()->tank(controller_map(left), controller_map(right));
 	
-		pros::delay(10);
+		pros::delay(10); 
 	}
 }

@@ -45,6 +45,9 @@
 #include "auton/autons.hpp"
 
 #include "driver/drive.hpp"
+#include "driver/intake.hpp"
+#include "driver/pneumatics.hpp"
+#include "driver/puncher.hpp"
 
 #include "functions.hpp"
 #include "devices.hpp"

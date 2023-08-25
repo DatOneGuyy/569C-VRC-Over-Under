@@ -24,7 +24,7 @@ pros::MotorGroup left_drive({left1, left2, left3});
 pros::MotorGroup right_drive({right1, right2, right3});
 
 
-lemlib::Drivetrain_t drivetrain {
+lemlib::Drivetrain_t drivetrain { 
 	&left_drive,
 	&right_drive,
 	15.25,
@@ -112,12 +112,16 @@ void autonomous(void) {
 
 	bool driving = false;
 
-	if (program == 0 || program == 1) {
-		right_auton();
-	} else if (program == 2 || program == 3) {
-		left_auton();
-	} else if (program == 4) {
-		skills();
+	switch (program) {
+		case 0:
+			left_auton();
+			break;
+		case 1:
+			right_auton();
+			break;
+		case 2:
+			skills();
+			break;
 	}
 }
 
@@ -137,6 +141,11 @@ void autonomous(void) {
 void opcontrol(void) {
 	driving = true;
 	pros::Task run_drive(drive_task);
+	pros::Task run_pneumatics(elevation_task);
+	pros::Task run_wings(wings_task);
+	pros::Task run_scraper(scraper_task);
+	pros::Task run_intake(intake_task);
+	pros::Task run_puncher(puncher_task);
 
 	while (true) {
 		pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f, %f", chassis_l.getPose(true).x, chassis_l.getPose(true).y);
