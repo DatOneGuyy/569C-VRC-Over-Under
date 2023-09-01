@@ -24,7 +24,7 @@ void elevation_task(void*) {
 }
 
 void wings_task(void*) {
-    pros::ADIPort wings({1, 'C'}, pros::E_ADI_DIGITAL_OUT);
+    pros::ADIPort wings('A', pros::E_ADI_DIGITAL_OUT);
     ControllerButton L1(ControllerDigital::L1);
 
     wings.set_value(false);

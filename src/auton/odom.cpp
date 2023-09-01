@@ -232,10 +232,10 @@ void turn_to_angle(double angle, double slew_rate, double threshold, double time
 	double position = transform_angle(-chassis_l.getPose(false).theta, false); //get current angle, inverted so counterclockwise is positive
 	double error = target - position;
     double power = 0; //output power
-	double kp = 1.1; //proportional constant
+	double kp = 0.9; //proportional constant
 
 	double past_error = 0; //used for derivative term
-	double kd = 0.1;
+	double kd = 0.3;
 
 	int slew_count = 0; //slew counter for acceleration control and timing
 	int step = 10; //delay between each loop iteration
@@ -284,7 +284,6 @@ void turn_to_angle(double angle, double slew_rate, double threshold, double time
 
 void drive_for(double distance, double slew_rate, double threshold, int timeout) {
     pros::ADIEncoder left_tracker('C', 'D', false);
-    pros::ADIEncoder right_tracker('A', 'B', true);
 
     //calculate target
 	double target = distance; //target angle
@@ -308,7 +307,7 @@ void drive_for(double distance, double slew_rate, double threshold, int timeout)
     pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Condition: %f", abs(error));
 
 	while (slew_count * step < timeout && fabs(error) > threshold) {
-		position = left_tracker.get_value() * 0.5 + right_tracker.get_value() * 0.5; //update position, error, power
+		position = left_tracker.get_value(); //update position, error, power
 		error = target - position;
         error_angle = -chassis_l.getPose(false).theta - angle_initial;
 		power = kp * error;

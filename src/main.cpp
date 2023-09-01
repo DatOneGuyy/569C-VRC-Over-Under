@@ -36,19 +36,18 @@ MotorGroup right_drive_o({-3, -12, -14});
 
 lemlib::Drivetrain_t drivetrain { 
 	&left_drive,
-	&right_drive_l,
+	nullptr,
 	15.25,
 	2.75,
 	600
 };
 
 pros::ADIEncoder left_tracker('C', 'D', false);
-pros::ADIEncoder right_tracker('A', 'B', true);
+//pros::ADIEncoder right_tracker('A', 'B', true);
 pros::ADIEncoder back_tracker('E', 'F', false);
 pros::IMU inertial1(7);
 
 lemlib::TrackingWheel left_tracking_wheel(&left_tracker, 2.75, -center_radius);
-lemlib::TrackingWheel right_tracking_wheel(&right_tracker, 2.75, center_radius);
 lemlib::TrackingWheel back_tracking_wheel(&back_tracker, 2.75, 0);
 
 lemlib::OdomSensors_t sensors {
@@ -160,7 +159,7 @@ void opcontrol(void) {
 	while (true) {
 		pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f, %f", chassis_l.getPose(true).y, chassis_l.getPose(true).x);
 		pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Angle: %f deg", chassis_l.getPose(false).theta);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Encoders: L: %d, R: %d", left_tracker.get_value(), right_tracker.get_value());
+		pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Encoder: L: %d", left_tracker.get_value());
 		pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Center: %d", back_tracker.get_value());
 		pros::delay(100);
 	}

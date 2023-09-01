@@ -4,7 +4,7 @@
 
 using namespace okapi;
 
-void intake_auton(void*) {
+void intake_auton_task(void*) {
     Motor intake(5);
 
     while (true) {

@@ -44,6 +44,7 @@
 //#include "pros/api_legacy.h"
 #include "auton/autons.hpp"
 #include "auton/intake.hpp"
+#include "auton/pneumatics.hpp"
 
 #include "driver/drive.hpp"
 #include "driver/intake.hpp"
