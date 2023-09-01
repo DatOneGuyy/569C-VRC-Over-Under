@@ -11,46 +11,56 @@ bool l = false;
 
 int program;
 
-double final_speed = 0;
+double intake_speed;
+
+double final_speed = 0.6;
+
+const double center_radius = 4.0803;
 
 pros::Motor left1(4);
 pros::Motor left2(20);
 pros::Motor left3(18);
-pros::Motor right1(3);
-pros::Motor right2(13);
-pros::Motor right3(16);
+pros::Motor right1(-3);
+pros::Motor right2(-12);
+pros::Motor right3(-14);
+pros::Motor right1_l(-3);
+pros::Motor right2_l(-12);
+pros::Motor right3_l(-14);
 
 pros::MotorGroup left_drive({left1, left2, left3});
 pros::MotorGroup right_drive({right1, right2, right3});
+pros::MotorGroup right_drive_l({right1_l, right2_l, right3_l});
 
+MotorGroup left_drive_o({4, 20, 18});
+MotorGroup right_drive_o({-3, -12, -14});
 
 lemlib::Drivetrain_t drivetrain { 
 	&left_drive,
-	&right_drive,
+	&right_drive_l,
 	15.25,
 	2.75,
 	600
 };
 
-pros::ADIEncoder left_tracker('C', 'D', true);
+pros::ADIEncoder left_tracker('C', 'D', false);
 pros::ADIEncoder right_tracker('A', 'B', true);
 pros::ADIEncoder back_tracker('E', 'F', false);
-pros::IMU inertial_p(16);
+pros::IMU inertial1(7);
 
-lemlib::TrackingWheel left_tracking_wheel(&left_tracker, 2.75, -5.0 * 184 / 180);
-lemlib::TrackingWheel right_tracking_wheel(&right_tracker, 2.75, 5.0 * 184 / 180);
-lemlib::TrackingWheel back_tracking_wheel(&back_tracker, 2.75, 5.125);
+lemlib::TrackingWheel left_tracking_wheel(&left_tracker, 2.75, -center_radius);
+lemlib::TrackingWheel right_tracking_wheel(&right_tracker, 2.75, center_radius);
+lemlib::TrackingWheel back_tracking_wheel(&back_tracker, 2.75, 0);
 
 lemlib::OdomSensors_t sensors {
 	&left_tracking_wheel,
-	&right_tracking_wheel,
+	nullptr,
 	&back_tracking_wheel,
 	nullptr,
-	&inertial_p
+	&inertial1
 };
 
-lemlib::ChassisController_t lateralController {8, 30, 1, 100, 3, 500, 5};
-lemlib::ChassisController_t angularController {4, 40, 1, 100, 3, 500, 40};
+lemlib::ChassisController_t lateralController {4, 2.5, 1, 100, 3, 500, 5};
+lemlib::ChassisController_t angularController {0.3, 1.0, 1, 100, 3, 500, 5};
 
 lemlib::Chassis chassis_l(drivetrain, lateralController, angularController, sensors);
 
@@ -108,7 +118,7 @@ void competition_initialize(void) {}
  * from where it left off.
  */
 void autonomous(void) {
-	program = 0;
+	program = 1;
 
 	bool driving = false;
 
@@ -141,16 +151,16 @@ void autonomous(void) {
 void opcontrol(void) {
 	driving = true;
 	pros::Task run_drive(drive_task);
-	pros::Task run_pneumatics(elevation_task);
-	pros::Task run_wings(wings_task);
-	pros::Task run_scraper(scraper_task);
+	pros::Task run_elevation(elevation_task);
+	//pros::Task run_wings(wings_task);
+	//pros::Task run_scraper(scraper_task);
 	pros::Task run_intake(intake_task);
 	pros::Task run_puncher(puncher_task);
 
 	while (true) {
-		pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f, %f", chassis_l.getPose(true).x, chassis_l.getPose(true).y);
+		pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f, %f", chassis_l.getPose(true).y, chassis_l.getPose(true).x);
 		pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Angle: %f deg", chassis_l.getPose(false).theta);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Encoders: L - %d, R - %d", left_tracker.get_value(), right_tracker.get_value());
+		pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Encoders: L: %d, R: %d", left_tracker.get_value(), right_tracker.get_value());
 		pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Center: %d", back_tracker.get_value());
 		pros::delay(100);
 	}

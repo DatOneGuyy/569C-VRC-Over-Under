@@ -43,6 +43,7 @@
 #include "lemlib/api.hpp"
 //#include "pros/api_legacy.h"
 #include "auton/autons.hpp"
+#include "auton/intake.hpp"
 
 #include "driver/drive.hpp"
 #include "driver/intake.hpp"
@@ -56,6 +57,8 @@ extern bool driving;
 
 extern bool r;
 extern bool l;
+
+extern double intake_speed;
 
 extern int program;
 

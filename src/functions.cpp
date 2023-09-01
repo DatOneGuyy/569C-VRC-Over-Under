@@ -1,20 +1,12 @@
 #include "main.h"
 #include "functions.hpp"
 
-double controller_map(double i) {
-	double sign = i == 0 ? 0 : fabs(i) / i;
-    double input = fabs(i * 100);
-    double output = 0;
-
-    if (input < 5) {
-        output = 0;
-    } else if (input < 100.0 / 1.3) {
-        output = input * 1.3;
-    } else {
-        output = 100;
-    }
-
-    return output / 100 * sign;
+double controller_map(double input) {
+  double output = 0;
+  if (fabs(input) > 0.05) {
+    output = 4 * pow(fabs(input) - 0.5, 3) + 0.5;
+  }
+  return output * sign(input);
 }
 
 double ptv(double percent) {
@@ -37,7 +29,7 @@ double c(double min, double max, double value) {
 
 double slew(double rate, int count, double target, double base) {
 	if (fabs(base + rate * count) < fabs(target)) {
-		return base + rate * count;
+		return (base + rate * count) * sign(target);
 	} else {
 		return target;
 	}
@@ -52,13 +44,13 @@ double sign(double x) {
 }
 
 double circle(double radius, double value) {
-  return sqrt(radius * radius - value * value);
+  return std::sqrt(radius * radius - value * value);
 }
 
 double quadratic_profile(double initial, double final, double maximum, double position, bool inverted) {
   double n = 0;
   const double f = 1.5; //sharpness of velocity curve, roughly equivalent to slew rate
-  const double degree = 1; //sharpness of deceleration curve
+  const double degree = 4; //sharpness of deceleration curve
   double p = 0;
   double A = 0;
   double B = 0;
@@ -92,24 +84,15 @@ double dist(double x1, double y1, double x2, double y2) {
 }
 
 double positive_fmod(double a, double b) {
-  double temp = 0;
-  if (a < 0) {
-    temp = a / b - ceil(a / b);
-    return (b + temp * b == b) ? 0 : (b + temp * b);
-  } else if (a > 0) {
-    temp = a / b - floor(a / b);
-    return temp * b == b ? 0 : (temp * b);
-  } else {
-    return 0;
-  }
+  return a - floor(a / b) * b;
 }
 
 double transform_angle(double angle, bool radians) {
   double output = 0;
   if (radians) {
-    output = positive_fmod(angle - okapi::pi, 2 * okapi::pi) - okapi::pi;
+    output = -positive_fmod(-angle + okapi::pi, 2 * okapi::pi) + okapi::pi;
   } else {
-    output = positive_fmod(angle - 180, 360) - 180;
+    output = -positive_fmod(-angle + 180, 360) + 180;
   }
   return output;
 }
