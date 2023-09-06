@@ -24,7 +24,6 @@ void elevation_task(void*) {
 }
 
 void wings_task(void*) {
-    pros::ADIPort wings('A', pros::E_ADI_DIGITAL_OUT);
     ControllerButton L1(ControllerDigital::L1);
 
     wings.set_value(false);
@@ -37,15 +36,14 @@ void wings_task(void*) {
     }
 }
 
-void scraper_task(void*) {
-    pros::ADIPort scraper({1, 'D'}, pros::E_ADI_DIGITAL_OUT);
+void latch_task(void*) {
     ControllerButton UP(ControllerDigital::up);
 
-    scraper.set_value(false);
+    latch.set_value(false);
 
     while (true) {
         if (UP.changedToPressed()) {
-            scraper.set_value(!scraper.get_value());
+            latch.set_value(!latch.get_value());
         }
 
         pros::delay(10);

@@ -1,7 +1,4 @@
 #include "main.h"
-#include "auton/odom.hpp"
-#include "okapi/api.hpp"
-#include "auton/autons.hpp"
 
 using namespace okapi;
 
@@ -13,31 +10,42 @@ void clear_screen(void) {
 void right_auton(void) {
 	pros::Task run_intake_auton(intake_auton_task);
 
-	start_odom(0, 0, 3 * pi / 4);
+	start_odom(0, 0, 135);
+	
+	//intake ball and drive forward
 	lower_latch();
 	intake_speed = 80;
 	drive_for(400);
 	turn_to_angle(90);
+
+	//score preload
 	intake_speed = -100;
-	raise_latch();
 	drive_for(500);
-	drive_for(-300);
-	turn_to_angle(-80);
+
+	//turn around
+	drive_for(-200);
+	turn_to_angle(-70);
 	pros::delay(200);
-	drive_for(100);
-	turn_to_angle(-60);
+
+	//remove match load ball
+	drive_for(200);
 	open_wings();
+	turn_to_angle(-60);
 	pros::delay(200);
-	drive_for(500);
-	close_wings();
+	open_wings();
+	drive_for(700);
+
+	//push ball to offensive zone
 	turn_to_angle(0);
-	lower_latch();
+	pros::delay(200);
 	drive_for(800);
 	
 }
 
 void left_auton(void) {
-	
+	start_odom(0, 0, 135);
+	open_wings();
+	drive_for(400);
 }
 
 void skills(void) { 
