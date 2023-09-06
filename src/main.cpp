@@ -1,6 +1,4 @@
 #include "main.h"
-#include "okapi/api.hpp"
-#include "pros/screen.h"
 
 using namespace okapi;
 
@@ -17,38 +15,36 @@ double final_speed = 0.6;
 
 const double center_radius = 4.0803;
 
-pros::Motor left1(4);
-pros::Motor left2(20);
-pros::Motor left3(18);
-pros::Motor right1(-3);
-pros::Motor right2(-12);
-pros::Motor right3(-14);
-pros::Motor right1_l(-3);
-pros::Motor right2_l(-12);
-pros::Motor right3_l(-14);
+pros::Motor left1(4, pros::E_MOTOR_GEARSET_06, false);
+pros::Motor left2(20, pros::E_MOTOR_GEARSET_06, false);
+pros::Motor left3(18, pros::E_MOTOR_GEARSET_06, false);
+pros::Motor right1(-3, pros::E_MOTOR_GEARSET_06, true);
+pros::Motor right2(-12, pros::E_MOTOR_GEARSET_06, true);
+pros::Motor right3(-14, pros::E_MOTOR_GEARSET_06, true);
 
 pros::MotorGroup left_drive({left1, left2, left3});
 pros::MotorGroup right_drive({right1, right2, right3});
-pros::MotorGroup right_drive_l({right1_l, right2_l, right3_l});
 
 MotorGroup left_drive_o({4, 20, 18});
 MotorGroup right_drive_o({-3, -12, -14});
 
 lemlib::Drivetrain_t drivetrain { 
 	&left_drive,
-	nullptr,
+	&right_drive,
 	15.25,
 	2.75,
 	600
 };
 
 pros::ADIEncoder left_tracker('C', 'D', false);
-//pros::ADIEncoder right_tracker('A', 'B', true);
 pros::ADIEncoder back_tracker('E', 'F', false);
 pros::IMU inertial1(7);
 
 lemlib::TrackingWheel left_tracking_wheel(&left_tracker, 2.75, -center_radius);
 lemlib::TrackingWheel back_tracking_wheel(&back_tracker, 2.75, 0);
+
+pros::ADIPort wings('A', pros::E_ADI_DIGITAL_OUT);
+pros::ADIPort latch('B', pros::E_ADI_DIGITAL_OUT);
 
 lemlib::OdomSensors_t sensors {
 	&left_tracking_wheel,
@@ -71,20 +67,8 @@ lemlib::Chassis chassis_l(drivetrain, lateralController, angularController, sens
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize(void) {/*
-	IMU inertial(16, IMUAxes::z);
-	IMU inertial2(12, IMUAxes::z);
-	IMU inertial3(19, IMUAxes::z);
-
-	inertial.calibrate();
-	inertial2.calibrate();
-	inertial3.calibrate();
-
-	while (inertial.isCalibrating() || inertial2.isCalibrating() || inertial3.isCalibrating()) {
-		pros::delay(200);
-	}*/
+void initialize(void) {
 	chassis_l.calibrate();
-	pros::delay(3000);
 }
 
 /**
@@ -151,8 +135,8 @@ void opcontrol(void) {
 	driving = true;
 	pros::Task run_drive(drive_task);
 	pros::Task run_elevation(elevation_task);
-	//pros::Task run_wings(wings_task);
-	//pros::Task run_scraper(scraper_task);
+	pros::Task run_wings(wings_task);
+	pros::Task run_latch(latch_task);
 	pros::Task run_intake(intake_task);
 	pros::Task run_puncher(puncher_task);
 

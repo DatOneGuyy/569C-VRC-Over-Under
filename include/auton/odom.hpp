@@ -19,15 +19,13 @@ void turn_to(
     double y,
     double slew_rate = 0.8,
     double threshold = 0.03,
-    double timeout = 3000,
-    int threshold_time = 200
+    double timeout = 3000
 );
 void turn_to_angle(
     double angle,
     double slew_rate = 0.8,
     double threshold = 1,
-    double timeout = 3000,
-    int threshold_time = 200
+    double timeout = 3000
 );
 void drive_for(
     double distance,

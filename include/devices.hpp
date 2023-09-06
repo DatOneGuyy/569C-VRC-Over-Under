@@ -10,3 +10,9 @@ extern pros::MotorGroup left_drive;
 extern pros::MotorGroup right_drive;
 extern okapi::MotorGroup left_drive_o;
 extern okapi::MotorGroup right_drive_o;
+
+extern pros::ADIPort wings;
+extern pros::ADIPort latch;
+
+extern pros::ADIEncoder left_tracker;
+extern pros::ADIEncoder back_tracker;

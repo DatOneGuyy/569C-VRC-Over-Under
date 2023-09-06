@@ -6,21 +6,18 @@
 using namespace okapi;
 
 void open_wings() {
-    pros::ADIPort wings('A', pros::E_ADI_DIGITAL_OUT);
     wings.set_value(true);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 11, "Wings opened");
 }
 
 void close_wings() {
-    pros::ADIPort wings('A', pros::E_ADI_DIGITAL_OUT);
     wings.set_value(false);
 }
 
 void lower_latch() {
-    pros::ADIPort latch('B', pros::E_ADI_DIGITAL_OUT);
     latch.set_value(true);
 }
 
 void raise_latch() {
-    pros::ADIPort latch('B', pros::E_ADI_DIGITAL_OUT);
     latch.set_value(false);
 }

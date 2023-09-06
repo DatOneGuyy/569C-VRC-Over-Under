@@ -43,6 +43,7 @@
 #include "lemlib/api.hpp"
 //#include "pros/api_legacy.h"
 #include "auton/autons.hpp"
+#include "auton/odom.hpp"
 #include "auton/intake.hpp"
 #include "auton/pneumatics.hpp"
 
