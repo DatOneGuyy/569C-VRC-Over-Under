@@ -5,11 +5,11 @@ using namespace okapi;
 double final_speed = 0.6;
 
 void start_odom(double initial_x, double initial_y, double angle) {
-       /*
-        Create odometry chassis with external linkage
-        2.75" wheels, 14.5" track width, 600rpm
-        2.75" tracking wheels, 11.5" track width, 3" offset from tracking center
-        */
+    /*
+    Create odometry chassis with external linkage
+    2.75" wheels, 14.5" track width, 600rpm
+    2.75" tracking wheels, 11.5" track width, 3" offset from tracking center
+    */
 
     chassis_l.setPose(initial_y, initial_x, -angle * pi / 180, true);
     left_drive_o.setBrakeMode(AbstractMotor::brakeMode::hold);
@@ -115,8 +115,7 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
         right_power = c(-12000, 12000, 100 * ptv(base_voltage + turn_voltage));
         left_drive.move_voltage(left_power);
         right_drive.move_voltage(right_power);
-        //chassis->getModel()->tank(left_power, right_power); //Standard tank drive input
-
+        
         pros::screen::print(TEXT_MEDIUM, 0, "Position: %f, %f (%f)", x, y, position);
         pros::screen::print(TEXT_MEDIUM, 1, "Angle: %f rad, %f deg", angle, angle * 180 / pi);
         pros::screen::print(TEXT_MEDIUM, 2, "Error: %f, %f deg", distance_error, angle_error);
@@ -199,31 +198,35 @@ void turn_to(double x, double y, double slew_rate, double threshold, double time
     right_drive.move_velocity(0);
 }
 
-void turn_to_angle(double angle, double slew_rate, double threshold, double timeout) {
+void turn_to_angle(double angle, int swing, double kp, double slew_rate, double threshold, double timeout) {
 	double target = angle; //target angle
     
 	double position = transform_angle(-chassis_l.getPose(false).theta, false); //get current angle, inverted so counterclockwise is positive
 	double error = target - position;
     double power = 0; //output power
-	double kp = 0.9; //proportional constant
 
-	double past_error = 0; //used for derivative term
+	double past_error = 0; 
 	double kd = 0.3;
 
-	int slew_count = 0; //slew counter for acceleration control and timing
+	int slew_count = 0; //slew counter
 	int step = 10; //delay between each loop iteration
-	int threshold_count = 0; //counter for exiting once within the target threshold for a certain period of time
-
+	
 	while (slew_count * step < timeout && fabs(error) > threshold) {
 		position = transform_angle(-chassis_l.getPose(false).theta, false); //update position, error, power
 		error = target - position;
 		power = kp * error;
 		power = slew(slew_rate, slew_count, power, 35); //slew, start at 35, increase by input slew rate every 10ms
-		power = power + kd * (error - past_error); //
+		power = power + kd * (error - past_error); 
 		power = c(-80, 80, power);
 
-        left_drive.move_voltage(ptv(-power));
-        right_drive.move_voltage(ptv(power));
+        if (swing == 0) {
+            left_drive.move_voltage(ptv(-power));
+            right_drive.move_voltage(ptv(power));
+        } else if (swing == 1) {
+            left_drive.move_voltage(ptv(-power));
+        } else {
+            right_drive.move_voltage(ptv(power));
+        }
 
 		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f", position);
 		pros::screen::print(TEXT_MEDIUM, 1, "Error: %f", error);
@@ -248,6 +251,8 @@ void turn_to_angle(double angle, double slew_rate, double threshold, double time
 
 void drive_for(double distance, double slew_rate, double threshold, int timeout) {
     //calculate target
+    left_tracker.reset();
+
 	double target = distance; //target angle
     
 	double position = 0; 
@@ -282,7 +287,7 @@ void drive_for(double distance, double slew_rate, double threshold, int timeout)
 
 		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f", position);
 		pros::screen::print(TEXT_MEDIUM, 1, "Error: %f", error);
-		pros::screen::print(TEXT_MEDIUM, 2, "Angle error: %d", error_angle);
+		pros::screen::print(TEXT_MEDIUM, 2, "Angle error: %f", error_angle);
 		pros::screen::print(TEXT_MEDIUM, 3, "Power: %f", power);
         pros::screen::print(TEXT_MEDIUM, 4, "Target: %f", target);
         pros::screen::print(TEXT_MEDIUM, 5, "Angle: %f", -chassis_l.getPose(false).theta);
