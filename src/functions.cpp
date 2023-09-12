@@ -12,10 +12,6 @@ double ptv(double percent) {
 	return percent * 120;
 }
 
-double avg(double a, double b) {
-    return (a + b) / 2;
-}
-
 double c(double min, double max, double value) {
     if (value < min) {
         return min;
@@ -40,10 +36,6 @@ double sign(double x) {
     } else {
         return fabs(x) / x;
     }
-}
-
-double circle(double radius, double value) {
-    return std::sqrt(radius * radius - value * value);
 }
 
 double quadratic_profile(double initial, double final, double maximum, double position, bool inverted) {
