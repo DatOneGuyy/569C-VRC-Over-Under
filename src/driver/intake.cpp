@@ -9,33 +9,31 @@ void intake_task(void*) {
     ControllerButton R1(ControllerDigital::R1);
     ControllerButton R2(ControllerDigital::R2);
 
-    bool intake_active = false;
     bool triball = false;
 
     while (true) {
-        if (R1.changedToPressed()) {
-            if (triball) {
-                intake_active = true;
-                triball = false;
-                intake.moveVoltage(-12000);
-                pros::delay(300);
-                intake.moveVoltage(12000);
-            } else {
-                if (intake_active) {
-                    intake_active = false;
-                    intake.moveVoltage(0);
-                } else {
-                    intake_active = true;
-                    intake.moveVoltage(12000);
+        if (!R2.isPressed()) {
+            if (R1.changedToPressed()) {
+                if (triball) {
+                    triball = false;
+                    intake_speed = -12000;
                     pros::delay(300);
+                    intake_speed = 8000;
+                    pros::delay(300);
+                    intake_speed = 12000;
+                } else if (intake_speed == 12000) {
+                    intake_speed = 0;
+                } else {
+                    intake_speed = 12000;
                 }
-            }
-        }
-        intake.moveVoltage(12000 * intake_active);
+            } 
 
-        if (intake_active && intake.getActualVelocity() == 0) {
-            intake_active = false;
-            triball = true;
+            if (intake_speed > 0 && intake.getActualVelocity() < 10) {
+                triball = true;
+                intake_speed = 1000;
+            }
+        } else {
+            intake_speed = -12000;
         }
 
         pros::delay(10);

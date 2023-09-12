@@ -2,11 +2,6 @@
 
 using namespace okapi;
 
-void clear_screen(void) {
-	pros::screen::set_pen(COLOR_BLACK);
-	pros::screen::fill_rect(0, 0, 480, 240);
-}
-
 void right_auton(void) {
 	pros::Task run_intake_auton(intake_auton_task);
 
