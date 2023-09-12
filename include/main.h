@@ -41,7 +41,7 @@
  */
 #include "okapi/api.hpp"
 #include "lemlib/api.hpp"
-//#include "pros/api_legacy.h"
+
 #include "auton/autons.hpp"
 #include "auton/odom.hpp"
 #include "auton/intake.hpp"
@@ -54,11 +54,6 @@
 
 #include "functions.hpp"
 #include "devices.hpp"
-
-extern bool driving;
-
-extern bool r;
-extern bool l;
 
 extern double intake_speed;
 
@@ -86,11 +81,13 @@ extern double final_speed;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 void autonomous(void);
 void initialize(void);
 void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
+
 #ifdef __cplusplus
 }
 #endif

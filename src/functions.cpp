@@ -1,5 +1,4 @@
 #include "main.h"
-#include "functions.hpp"
 
 double controller_map(double input) {
   double output = 0;

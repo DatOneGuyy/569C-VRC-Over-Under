@@ -23,6 +23,8 @@ void turn_to(
 );
 void turn_to_angle(
     double angle,
+    int swing = 0,
+    double kp = 0.9,
     double slew_rate = 0.8,
     double threshold = 1,
     double timeout = 3000

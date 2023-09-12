@@ -1,8 +1,8 @@
 #include "main.h"
-#include "okapi/api.hpp"
-#include "driver/intake.hpp"
 
 using namespace okapi;
+
+double intake_speed = 0;
 
 void intake_task(void*) {
     Motor intake(5);

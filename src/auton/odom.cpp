@@ -2,22 +2,18 @@
 
 using namespace okapi;
 
-std::shared_ptr<OdomChassisController> chassis = 
-		ChassisControllerBuilder()
-			.withMotors({4, 20, 18}, {-3, -12, -14})
-			.withDimensions(AbstractMotor::gearset::blue, {{2.75_in, 14.5_in}, imev5BlueTPR})
-			.withOdometry({{2.75_in, 8.0_in, 0_in, 2.75_in}, quadEncoderTPR})
-			.buildOdometry();
+double final_speed = 0.6;
 
 void start_odom(double initial_x, double initial_y, double angle) {
-       /*
-        Create odometry chassis with external linkage
-        2.75" wheels, 14.5" track width, 600rpm
-        2.75" tracking wheels, 11.5" track width, 3" offset from tracking center
-        */
+    /*
+    Create odometry chassis with external linkage
+    2.75" wheels, 14.5" track width, 600rpm
+    2.75" tracking wheels, 11.5" track width, 3" offset from tracking center
+    */
 
     chassis_l.setPose(initial_y, initial_x, -angle * pi / 180, true);
-    chassis->getModel()->setBrakeMode(AbstractMotor::brakeMode::hold);
+    left_drive_o.setBrakeMode(AbstractMotor::brakeMode::hold);
+    right_drive_o.setBrakeMode(AbstractMotor::brakeMode::hold);
 
     final_speed = 0; //Default starting speed target for initial slew rate
 }
@@ -76,7 +72,7 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
         * has been traveled
         */
         if (fabs(position - past_position) == 0 && position > 0.5) { 
-            pros::screen::print(pros::E_TEXT_MEDIUM, 9, "Exited");
+            pros::screen::print(TEXT_MEDIUM, 9, "Exited");
             break;
         }
         
@@ -119,17 +115,16 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
         right_power = c(-12000, 12000, 100 * ptv(base_voltage + turn_voltage));
         left_drive.move_voltage(left_power);
         right_drive.move_voltage(right_power);
-        //chassis->getModel()->tank(left_power, right_power); //Standard tank drive input
-
-        pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f, %f (%f)", x, y, position);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Angle: %f rad, %f deg", angle, angle * 180 / pi);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Error: %f, %f deg", distance_error, angle_error);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Base Voltage: %f", base_voltage);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Turn Voltage: %f", turn_voltage);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Distance Error: %f", distance_error);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Quadratic Profile: %f", quadratic_profile(fmax(final_speed, 0.35), target_speed, 1.0, position, backwards));
-        pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Position position: %f", position);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 8, "Power: %f, %f", left_power, right_power);
+        
+        pros::screen::print(TEXT_MEDIUM, 0, "Position: %f, %f (%f)", x, y, position);
+        pros::screen::print(TEXT_MEDIUM, 1, "Angle: %f rad, %f deg", angle, angle * 180 / pi);
+        pros::screen::print(TEXT_MEDIUM, 2, "Error: %f, %f deg", distance_error, angle_error);
+        pros::screen::print(TEXT_MEDIUM, 3, "Base Voltage: %f", base_voltage);
+        pros::screen::print(TEXT_MEDIUM, 4, "Turn Voltage: %f", turn_voltage);
+        pros::screen::print(TEXT_MEDIUM, 5, "Distance Error: %f", distance_error);
+        pros::screen::print(TEXT_MEDIUM, 6, "Quadratic Profile: %f", quadratic_profile(fmax(final_speed, 0.35), target_speed, 1.0, position, backwards));
+        pros::screen::print(TEXT_MEDIUM, 7, "Position position: %f", position);
+        pros::screen::print(TEXT_MEDIUM, 8, "Power: %f, %f", left_power, right_power);
 
 
         past_angle_error = angle_error; //Update past angle for derivative calculations
@@ -143,7 +138,7 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
         left_drive.move_voltage(ptv(100 * target_speed));
         right_drive.move_voltage(ptv(100 * target_speed));
     } else {
-        pros::screen::print(pros::E_TEXT_MEDIUM, 10, "Stopped");
+        pros::screen::print(TEXT_MEDIUM, 10, "Stopped");
         left_drive.move_velocity(0);
         right_drive.move_velocity(0);
     } 
@@ -171,15 +166,7 @@ void turn_to(double x, double y, double slew_rate, double threshold, double time
 	int slew_count = 0; //slew counter for acceleration control and timing
 	int step = 10; //delay between each loop iteration
 	
-    bool turn_direction; //determine turn direction by comparing current absolute angle to target
-
-    if (position < target) {
-        turn_direction = l;
-    } else {
-        turn_direction = r;
-    }
-
-    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Condition: %f", abs(error));
+    pros::screen::print(TEXT_MEDIUM, 4, "Condition: %f", abs(error));
 
 	while (slew_count * step < timeout && fabs(error) > threshold) {
 		position = -chassis_l.getPose(true).theta; //update position, error, power
@@ -192,10 +179,10 @@ void turn_to(double x, double y, double slew_rate, double threshold, double time
         left_drive.move_voltage(ptv(-power));
         right_drive.move_voltage(ptv(power));
 
-		pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f", position * 180 / pi);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Error: %f", error);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Power: %f", power);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Target: %f", target);
+		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f", position * 180 / pi);
+		pros::screen::print(TEXT_MEDIUM, 1, "Error: %f", error);
+		pros::screen::print(TEXT_MEDIUM, 2, "Power: %f", power);
+        pros::screen::print(TEXT_MEDIUM, 3, "Target: %f", target);
 
         if (past_error == error && slew_count > 30) {
             break;
@@ -211,39 +198,42 @@ void turn_to(double x, double y, double slew_rate, double threshold, double time
     right_drive.move_velocity(0);
 }
 
-void turn_to_angle(double angle, double slew_rate, double threshold, double timeout) {
-    //calculate target
+void turn_to_angle(double angle, int swing, double kp, double slew_rate, double threshold, double timeout) {
 	double target = angle; //target angle
     
 	double position = transform_angle(-chassis_l.getPose(false).theta, false); //get current angle, inverted so counterclockwise is positive
 	double error = target - position;
     double power = 0; //output power
-	double kp = 0.9; //proportional constant
 
-	double past_error = 0; //used for derivative term
+	double past_error = 0; 
 	double kd = 0.3;
 
-	int slew_count = 0; //slew counter for acceleration control and timing
+	int slew_count = 0; //slew counter
 	int step = 10; //delay between each loop iteration
-	int threshold_count = 0; //counter for exiting once within the target threshold for a certain period of time
-
+	
 	while (slew_count * step < timeout && fabs(error) > threshold) {
 		position = transform_angle(-chassis_l.getPose(false).theta, false); //update position, error, power
 		error = target - position;
 		power = kp * error;
 		power = slew(slew_rate, slew_count, power, 35); //slew, start at 35, increase by input slew rate every 10ms
-		power = power + kd * (error - past_error); //
+		power = power + kd * (error - past_error); 
 		power = c(-80, 80, power);
 
-        left_drive.move_voltage(ptv(-power));
-        right_drive.move_voltage(ptv(power));
+        if (swing == 0) {
+            left_drive.move_voltage(ptv(-power));
+            right_drive.move_voltage(ptv(power));
+        } else if (swing == 1) {
+            left_drive.move_voltage(ptv(-power));
+        } else {
+            right_drive.move_voltage(ptv(power));
+        }
 
-		pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f", position);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Error: %f", error);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Slew count: %d", slew_count);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Power: %f", power);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Target: %f", target);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Past error: %f", past_error);
+		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f", position);
+		pros::screen::print(TEXT_MEDIUM, 1, "Error: %f", error);
+		pros::screen::print(TEXT_MEDIUM, 2, "Slew count: %d", slew_count);
+		pros::screen::print(TEXT_MEDIUM, 3, "Power: %f", power);
+        pros::screen::print(TEXT_MEDIUM, 4, "Target: %f", target);
+        pros::screen::print(TEXT_MEDIUM, 5, "Past error: %f", past_error);
 
         if (fabs(past_error - error) < 0.01 && slew_count > 30) {
             break;
@@ -261,6 +251,8 @@ void turn_to_angle(double angle, double slew_rate, double threshold, double time
 
 void drive_for(double distance, double slew_rate, double threshold, int timeout) {
     //calculate target
+    left_tracker.reset();
+
 	double target = distance; //target angle
     
 	double position = 0; 
@@ -279,7 +271,7 @@ void drive_for(double distance, double slew_rate, double threshold, int timeout)
 	int step = 10; //delay between each loop iteration
 	int threshold_count = 0; //counter for exiting once within the target threshold for a certain period of time
 
-    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Condition: %f", abs(error));
+    pros::screen::print(TEXT_MEDIUM, 4, "Condition: %f", abs(error));
 
 	while (slew_count * step < timeout && fabs(error) > threshold) {
 		position = left_tracker.get_value(); //update position, error, power
@@ -293,16 +285,17 @@ void drive_for(double distance, double slew_rate, double threshold, int timeout)
         left_drive.move_voltage(ptv(power - kg * error_angle * error / distance));
         right_drive.move_voltage(ptv(power + kg * error_angle * error / distance));
 
-		pros::screen::print(pros::E_TEXT_MEDIUM, 0, "Position: %f", position);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Error: %f", error);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 2, "Angle error: %d", error_angle);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Power: %f", power);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Target: %f", target);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Angle: %f", -chassis_l.getPose(false).theta);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Initial: %f", angle_initial);
+		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f", position);
+		pros::screen::print(TEXT_MEDIUM, 1, "Error: %f", error);
+		pros::screen::print(TEXT_MEDIUM, 2, "Angle error: %f", error_angle);
+		pros::screen::print(TEXT_MEDIUM, 3, "Power: %f", power);
+        pros::screen::print(TEXT_MEDIUM, 4, "Target: %f", target);
+        pros::screen::print(TEXT_MEDIUM, 5, "Angle: %f", -chassis_l.getPose(false).theta);
+        pros::screen::print(TEXT_MEDIUM, 6, "Initial: %f", angle_initial);
+        pros::screen::print(TEXT_MEDIUM, 7, "Past error: %f, Error: %f", past_error, error);
+        pros::screen::print(TEXT_MEDIUM, 8, "Slew count: %d", slew_count);
+        
         if (past_error == error && slew_count > 30) {
-            pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Past error: %f, Error: %f", past_error, error);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Slew count: %d", slew_count);
             break;
         }
 

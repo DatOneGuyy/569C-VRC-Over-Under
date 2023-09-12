@@ -1,13 +1,10 @@
 #include "main.h"
-#include "okapi/api.hpp"
-#include "auton/pneumatics.hpp"
-#include "pros/adi.hpp"
 
 using namespace okapi;
 
 void open_wings() {
     wings.set_value(true);
-    pros::screen::print(pros::E_TEXT_MEDIUM, 11, "Wings opened");
+    pros::screen::print(TEXT_MEDIUM, 11, "Wings opened");
 }
 
 void close_wings() {
