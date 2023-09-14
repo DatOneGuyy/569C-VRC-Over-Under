@@ -11,6 +11,9 @@ pros::Motor right1(-3, MOTOR_GEARSET_06, true);
 pros::Motor right2(-12, MOTOR_GEARSET_06, true);
 pros::Motor right3(-14, MOTOR_GEARSET_06, true);
 
+Motor intake(5);
+Motor puncher(9);
+
 pros::MotorGroup left_drive({left1, left2, left3});
 pros::MotorGroup right_drive({right1, right2, right3});
 

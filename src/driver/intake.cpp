@@ -2,42 +2,46 @@
 
 using namespace okapi;
 
-double intake_speed = 0;
-
 void intake_task(void*) {
-    Motor intake(5);
     ControllerButton R1(ControllerDigital::R1);
     ControllerButton R2(ControllerDigital::R2);
 
-    bool intake_active = false;
     bool triball = false;
+    double speed = 0;
+    int counter = 0;
 
     while (true) {
         if (R1.changedToPressed()) {
             if (triball) {
-                intake_active = true;
                 triball = false;
-                intake.moveVoltage(-12000);
+                speed = -100;
                 pros::delay(300);
-                intake.moveVoltage(12000);
+                speed = 0;
+                pros::delay(500);
+                speed = 100;
+            } else if (intake_speed == 100) {
+                speed = 0;
+                pros::delay(300);
             } else {
-                if (intake_active) {
-                    intake_active = false;
-                    intake.moveVoltage(0);
-                } else {
-                    intake_active = true;
-                    intake.moveVoltage(12000);
-                    pros::delay(300);
-                }
+                speed = 100;
+                pros::delay(300);
             }
         }
-        intake.moveVoltage(12000 * intake_active);
 
-        if (intake_active && intake.getActualVelocity() == 0) {
-            intake_active = false;
+        if (intake_speed > 0 && intake.getActualVelocity() < 10 && !triball && counter > 200) {
             triball = true;
+            counter = 0;
+            speed = 10;
         }
 
+        if (R2.isPressed()) {
+            intake_speed = -100;
+        } else {
+            intake_speed = speed;
+        }
+
+        counter++;
+    
         pros::delay(10);
     }
 }

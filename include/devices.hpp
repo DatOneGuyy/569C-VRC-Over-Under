@@ -10,6 +10,9 @@ extern pros::Motor right1;
 extern pros::Motor right2;
 extern pros::Motor righ3;
 
+extern okapi::Motor intake;
+extern okapi::Motor puncher;
+
 extern pros::MotorGroup left_drive;
 extern pros::MotorGroup right_drive;
 

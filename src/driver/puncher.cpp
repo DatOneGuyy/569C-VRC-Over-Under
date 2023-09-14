@@ -3,7 +3,6 @@
 using namespace okapi;
 
 void puncher_task(void*) {
-    Motor puncher(9);
     ControllerButton L2(ControllerDigital::L2);
 
     bool puncher_active = false;

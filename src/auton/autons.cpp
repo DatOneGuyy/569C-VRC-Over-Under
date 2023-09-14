@@ -2,10 +2,7 @@
 
 using namespace okapi;
 
-void clear_screen(void) {
-	pros::screen::set_pen(COLOR_BLACK);
-	pros::screen::fill_rect(0, 0, 480, 240);
-}
+double intake_speed = 0;
 
 void right_auton(void) {
 	pros::Task run_intake_auton(intake_auton_task);
@@ -53,8 +50,52 @@ void right_auton(void) {
 }
 
 void left_auton(void) {
+	pros::Task run_intake_auton(intake_auton_task);
 	start_odom(0, 0, -135);
-	drive_for(-500);
+
+	lower_latch();
+	intake_speed = 100;
+	pros::delay(200);
+	drive_for(750, 0.2, 1, 5000);
+	turn_to_angle(-90);
+
+	intake_speed = -100;
+	raise_latch();
+	drive_for(500, 1.5);
+	pros::delay(500);
+
+	drive_for(-350);
+	intake_speed = 100;
+	pros::delay(200);
+	turn_to_angle(-20);
+	pros::delay(400);
+	drive_for(1500);
+	
+	pros::delay(500);
+	drive_for(-300);
+	turn_to_angle(-140);
+	intake_speed = -100;
+	pros::delay(500);
+	
+	turn_to_angle(-90);
+	pros::delay(200);
+	intake_speed = 100;
+	drive_for(600);
+	pros::delay(200);
+
+	drive_for(-100);
+	open_wings();
+	turn_to_angle(-170);
+	pros::delay(200);
+	intake_speed = -100;
+	pros::delay(500);
+	intake_speed = 20;
+	drive_for(600, 1.5);
+
+	intake_speed = 0;
+	pros::delay(500);
+	drive_for(-200);
+	close_wings();
 }
 
 void skills(void) { 
