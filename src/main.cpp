@@ -44,7 +44,7 @@ void competition_initialize(void) {}
  * from where it left off.
  */
 void autonomous(void) {
-	program = 1;
+	program = 0;
 
 	bool driving = false;
 
@@ -81,6 +81,7 @@ void opcontrol(void) {
 	pros::Task run_latch(latch_task);
 	pros::Task run_intake(intake_task);
 	pros::Task run_puncher(puncher_task);
+	pros::Task run_intake_auton(intake_auton_task);
 
 	while (true) {
 		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f, %f", chassis_l.getPose(true).y, chassis_l.getPose(true).x);
