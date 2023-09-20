@@ -151,7 +151,7 @@ void drive_to(double target_x, double target_y, double target_speed, bool backwa
 * Needs to be tested to see if it is more accurate to just turn using the odometry
 * If the inertial is better
 */
-void turn_to(double x, double y, double slew_rate, double threshold, double timeout) {
+void turn_to(double x, double y, double slew_rate, double threshold, int timeout) {
     //calculate target
 	double target = transform_angle(atan2(y - chassis_l.getPose().y, x - chassis_l.getPose().x)); //target angle
 
@@ -198,7 +198,7 @@ void turn_to(double x, double y, double slew_rate, double threshold, double time
     right_drive.move_velocity(0);
 }
 
-void turn_to_angle(double angle, int swing, double kp, double slew_rate, double threshold, double timeout) {
+void turn_to_angle(double angle, int swing, double kp, double slew_rate, double threshold, int timeout) {
 	double target = angle; //target angle
     
 	double position = transform_angle(-chassis_l.getPose(false).theta, false); //get current angle, inverted so counterclockwise is positive
@@ -222,10 +222,10 @@ void turn_to_angle(double angle, int swing, double kp, double slew_rate, double 
         if (swing == 0) {
             left_drive.move_voltage(ptv(-power));
             right_drive.move_voltage(ptv(power));
-        } else if (swing == 1) {
-            left_drive.move_voltage(ptv(-power));
+        } else if (abs(swing) == 1) {
+            left_drive.move_voltage(ptv(-power) * sign(swing));
         } else {
-            right_drive.move_voltage(ptv(power));
+            right_drive.move_voltage(ptv(power) * sign(swing));
         }
 
 		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f", position);
@@ -249,6 +249,17 @@ void turn_to_angle(double angle, int swing, double kp, double slew_rate, double 
     right_drive.move_velocity(0);
 }
 
+void drive_to_point(double x, double y, double slew_rate[], double threshold[], int timeout[]) {
+    double current_x = chassis_l.getPose().y;
+    double current_y = chassis_l.getPose().x;
+    double distance = dist(current_x, current_y, x, y);
+    
+    double target_angle = transform_angle(atan2(y - current_y, x - current_x));
+
+    turn_to_angle(target_angle, slew_rate[0], threshold[0], timeout[0]);
+    drive_for(distance, slew_rate[1], threshold[1], timeout[1]);
+}
+
 void drive_for(double distance, double slew_rate, double threshold, int timeout) {
     //calculate target
     left_tracker.reset();
@@ -265,13 +276,11 @@ void drive_for(double distance, double slew_rate, double threshold, int timeout)
 
     double angle_initial = -chassis_l.getPose(false).theta;
     double error_angle = 0;
-    double kg = 2;
+    double kg = 0;
 
 	int slew_count = 0; //slew counter for acceleration control and timing
 	int step = 10; //delay between each loop iteration
 	int threshold_count = 0; //counter for exiting once within the target threshold for a certain period of time
-
-    pros::screen::print(TEXT_MEDIUM, 4, "Condition: %f", abs(error));
 
 	while (slew_count * step < timeout && fabs(error) > threshold) {
 		position = left_tracker.get_value(); //update position, error, power

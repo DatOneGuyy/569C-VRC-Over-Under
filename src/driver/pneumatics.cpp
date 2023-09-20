@@ -5,13 +5,13 @@ using namespace okapi;
 void elevation_task(void*) {
     pros::ADIPort front_elevation('G', ADI_DIGITAL_OUT);
     pros::ADIPort back_elevation('H', ADI_DIGITAL_OUT);
-    ControllerButton LEFT(ControllerDigital::left);
+    ControllerButton R2(ControllerDigital::R2);
 
     front_elevation.set_value(false);
     back_elevation.set_value(false);
 
     while (true) {
-        if (LEFT.changedToReleased()) {
+        if (R2.changedToReleased()) {
             front_elevation.set_value(!front_elevation.get_value());
             back_elevation.set_value(!back_elevation.get_value());
         }

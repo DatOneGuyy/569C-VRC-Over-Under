@@ -6,9 +6,9 @@ void puncher_task(void*) {
     ControllerButton L2(ControllerDigital::L2);
 
     bool puncher_active = false;
-    bool puncher_active_prev = false;
 
     puncher.tarePosition();
+    puncher.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
 
     while (true) {
         if (L2.changedToReleased()) {
@@ -17,15 +17,11 @@ void puncher_task(void*) {
 
         if (puncher_active) {
             puncher.moveVoltage(ptv(85));
-        } else if (puncher_active_prev) {
-            while (fmod(puncher.getPosition(), 360) < 120 || fmod(puncher.getPosition(), 360) > 150) {
-                puncher.moveVoltage(ptv(100));
-                pros::delay(10);
-            }
-            puncher.moveVoltage(0);
+        } else {
+            puncher.moveVoltage(ptv(0));
         }
 
-        puncher_active_prev = puncher_active;
+        pros::screen::print(TEXT_MEDIUM, 8, "puncher: %f", fmod(puncher.getPosition(), 750));
         
         pros::delay(10);
     }
