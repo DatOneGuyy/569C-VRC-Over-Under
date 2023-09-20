@@ -46,6 +46,7 @@
 #include "auton/odom.hpp"
 #include "auton/intake.hpp"
 #include "auton/pneumatics.hpp"
+#include "auton/puncher.hpp"
 
 #include "driver/drive.hpp"
 #include "driver/intake.hpp"
