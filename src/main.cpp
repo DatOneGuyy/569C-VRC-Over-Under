@@ -3,6 +3,8 @@
 using namespace okapi;
 
 int program;
+double intake_speed;
+bool driving = false;
   
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -44,9 +46,9 @@ void competition_initialize(void) {}
  * from where it left off.
  */
 void autonomous(void) {
-	program = 0;
+	program = 2;
 
-	bool driving = false;
+	driving = false;
 
 	switch (program) {
 		case 0:
@@ -81,13 +83,13 @@ void opcontrol(void) {
 	pros::Task run_latch(latch_task);
 	pros::Task run_intake(intake_task);
 	pros::Task run_puncher(puncher_task);
-	pros::Task run_intake_auton(intake_auton_task);
 
 	while (true) {
 		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f, %f", chassis_l.getPose(true).y, chassis_l.getPose(true).x);
 		pros::screen::print(TEXT_MEDIUM, 1, "Angle: %f deg", chassis_l.getPose(false).theta);
 		pros::screen::print(TEXT_MEDIUM, 2, "Encoder: L: %d", left_tracker.get_value());
 		pros::screen::print(TEXT_MEDIUM, 3, "Center: %d", back_tracker.get_value());
+		pros::screen::print(TEXT_MEDIUM, 4, "driving: %d", driving);
 		pros::delay(100);
 	}
 }

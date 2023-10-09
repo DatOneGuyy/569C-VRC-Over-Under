@@ -10,7 +10,6 @@ void start_odom(double initial_x, double initial_y, double angle) {
     2.75" wheels, 14.5" track width, 600rpm
     2.75" tracking wheels, 11.5" track width, 3" offset from tracking center
     */
-
     chassis_l.setPose(initial_y, initial_x, -angle * pi / 180, true);
     left_drive_o.setBrakeMode(AbstractMotor::brakeMode::hold);
     right_drive_o.setBrakeMode(AbstractMotor::brakeMode::hold);
@@ -172,9 +171,9 @@ void turn_to(double x, double y, double slew_rate, double threshold, int timeout
 		position = -chassis_l.getPose(true).theta; //update position, error, power
 		error = target - position;
 		power = kp * error;
-		power = slew(slew_rate, slew_count, power, 35); //slew, start at 35, increase by input slew rate every 10ms
+		power = slew(slew_rate, slew_count, power, 45); //slew, start at 35, increase by input slew rate every 10ms
 		power = power + kd * (error - past_error); //
-		power = c(-80, 80, power);
+		power = c(-100, 100, power);
 
         left_drive.move_voltage(ptv(-power));
         right_drive.move_voltage(ptv(power));
@@ -198,6 +197,25 @@ void turn_to(double x, double y, double slew_rate, double threshold, int timeout
     right_drive.move_velocity(0);
 }
 
+void push(double time, double time2, double reverse) {
+    left_drive.move_voltage(12000);
+    right_drive.move_voltage(12000);
+    pros::delay(time);
+    if (time2 == 0) {
+        left_drive.move_voltage(0);
+        right_drive.move_voltage(0);
+    } else {
+        left_drive.move_voltage(-12000);
+        right_drive.move_voltage(-12000);
+        pros::delay(reverse);
+        left_drive.move_voltage(12000);
+        right_drive.move_voltage(12000);
+        pros::delay(time2);
+        left_drive.move_voltage(0);
+        right_drive.move_voltage(0);
+    }
+}
+
 void turn_to_angle(double angle, int swing, double kp, double slew_rate, double threshold, int timeout) {
 	double target = angle; //target angle
     
@@ -215,9 +233,9 @@ void turn_to_angle(double angle, int swing, double kp, double slew_rate, double 
 		position = transform_angle(-chassis_l.getPose(false).theta, false); //update position, error, power
 		error = target - position;
 		power = kp * error;
-		power = slew(slew_rate, slew_count, power, 35); //slew, start at 35, increase by input slew rate every 10ms
+		power = slew(slew_rate, slew_count, power, 45); //slew, start at 35, increase by input slew rate every 10ms
 		power = power + kd * (error - past_error); 
-		power = c(-80, 80, power);
+		power = c(-100, 100, power);
 
         if (swing == 0) {
             left_drive.move_voltage(ptv(-power));
@@ -287,7 +305,7 @@ void drive_for(double distance, double slew_rate, double threshold, int timeout)
 		error = target - position;
         error_angle = -chassis_l.getPose(false).theta - angle_initial;
 		power = kp * error;
-		power = slew(slew_rate, slew_count, power, 35); //slew, start at 35, increase by input slew rate every 10ms
+		power = slew(slew_rate, slew_count, power, 45); //slew, start at 35, increase by input slew rate every 10ms
 		power = power + kd * (error - past_error); //
 		power = c(-80, 80, power);
 

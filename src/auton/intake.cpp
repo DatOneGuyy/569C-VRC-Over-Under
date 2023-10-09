@@ -2,9 +2,7 @@
 
 using namespace okapi;
 
-void intake_auton_task(void*) {
-    while (true) {
-        intake.moveVoltage(ptv(intake_speed));
-        pros::delay(10);
-    }
+void set_intake(double percent) {
+    intake_speed = percent;
+    intake.moveVoltage(ptv(percent));
 }

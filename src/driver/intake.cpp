@@ -8,21 +8,24 @@ void intake_task(void*) {
 
     bool triball = false;
     int counter = 0;
+    int presses = 0;
 
     while (true) {
         if (R1.changedToPressed()) {
+            presses++;
             if (triball) {
                 triball = false;
-                intake_speed = -100;
+                set_intake(-100);
                 pros::delay(300);
-                intake_speed = 0;
-                pros::delay(500);
-                intake_speed = 100;
+                set_intake(0);
+                pros::delay(300);
+                set_intake(100);
+                pros::delay(300);
             } else if (intake_speed == 100) {
-                intake_speed = 0;
+                set_intake(0);
                 pros::delay(300);
             } else {
-                intake_speed = 100;
+                set_intake(100);
                 pros::delay(300);
             }
         }
@@ -30,10 +33,13 @@ void intake_task(void*) {
         if (intake_speed > 0 && intake.getActualVelocity() < 5 && !triball && counter > 250) {
             triball = true;
             counter = 0;
-            intake_speed = 0;
+            set_intake(0);
         }
 
         counter++;
+
+        pros::screen::print(TEXT_MEDIUM, 7, "intake speed: %f", intake_speed);
+        pros::screen::print(TEXT_MEDIUM, 6, "presses: %d", presses);
     
         pros::delay(10);
     }
