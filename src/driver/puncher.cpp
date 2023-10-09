@@ -16,7 +16,7 @@ void puncher_task(void*) {
         }
 
         if (puncher_active) {
-            puncher.moveVoltage(ptv(85));
+            puncher.moveVoltage(ptv(100));
         } else {
             puncher.moveVoltage(ptv(0));
         }

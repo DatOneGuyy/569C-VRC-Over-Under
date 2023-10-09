@@ -35,8 +35,9 @@ void wings_task(void*) {
 
 void latch_task(void*) {
     ControllerButton UP(ControllerDigital::up);
-
-    latch.set_value(false);
+    if (program == 2) {
+        latch.set_value(true);
+    }
 
     while (true) {
         if (UP.changedToPressed()) {

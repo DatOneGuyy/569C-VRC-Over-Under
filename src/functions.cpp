@@ -2,8 +2,8 @@
 
 double controller_map(double input) {
     double output = 0;
-        if (fabs(input) > 0.05) {
-            output = 4 * pow(fabs(input) - 0.5, 3) + 0.5;
+    if (fabs(input) > 0.05) {
+        output = 4 * pow(fabs(input) - 0.5, 3) + 0.5;
     }
     return output * sign(input);
 }
