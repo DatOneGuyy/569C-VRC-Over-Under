@@ -13,6 +13,8 @@ bool driving = false;
  * to keep execution time for this mode under a few seconds.
  */
 void initialize(void) {
+	inertial2.reset();
+	inertial3.reset();
 	chassis_l.calibrate();
 }
 
@@ -46,7 +48,7 @@ void competition_initialize(void) {}
  * from where it left off.
  */
 void autonomous(void) {
-	program = 2;
+	program = 1;
 
 	driving = false;
 

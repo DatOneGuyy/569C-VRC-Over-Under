@@ -20,6 +20,12 @@ extern okapi::MotorGroup left_drive_o;
 extern okapi::MotorGroup right_drive_o;
 
 extern pros::IMU inertial1;
+extern pros::IMU inertial2;
+extern pros::IMU inertial3;
+
+extern okapi::IMU inertial1_o;
+extern okapi::IMU inertial2_o;
+extern okapi::IMU inertial3_o;
 
 extern pros::ADIPort wings;
 extern pros::ADIPort latch;
