@@ -21,6 +21,12 @@ MotorGroup left_drive_o({4, 20, 18});
 MotorGroup right_drive_o({-3, -12, -14});
 
 pros::IMU inertial1(7);
+pros::IMU inertial2(10);
+pros::IMU inertial3(16);
+
+IMU inertial1_o(7);
+IMU inertial2_o(10);
+IMU inertial3_o(16);
 
 pros::ADIPort wings('A', ADI_DIGITAL_OUT);
 pros::ADIPort latch('B', ADI_DIGITAL_OUT);

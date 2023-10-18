@@ -11,6 +11,8 @@ void start_odom(double initial_x, double initial_y, double angle) {
     2.75" tracking wheels, 11.5" track width, 3" offset from tracking center
     */
     chassis_l.setPose(initial_y, initial_x, -angle * pi / 180, true);
+    inertial2.set_rotation(angle);
+    inertial3.set_rotation(angle);
     left_drive_o.setBrakeMode(AbstractMotor::brakeMode::hold);
     right_drive_o.setBrakeMode(AbstractMotor::brakeMode::hold);
 

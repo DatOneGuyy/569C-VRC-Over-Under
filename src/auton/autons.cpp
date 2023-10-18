@@ -41,29 +41,28 @@ void left_auton(void) {
 	drive_for(1150, 0.5);
 	set_intake(0);
 	raise_latch();
-
-	run_intake_auton.suspend();
 }
 
 void right_auton(void) {
 	start_odom(0, 0, -135);
+	
+	set_intake(100);
+	drive_for(550, 0.2, 1, 5000);
+	set_intake(0);
+	turn_to_angle(-90, 2);
 
-	lower_latch();
-	set_intake(1000);
-	pros::delay(200);
-	drive_for(750, 0.2, 1, 5000);
-	turn_to_angle(-90);
-
+	close_wings();
 	set_intake(-100);
-	raise_latch();
 	drive_for(500, 1.5);
 	pros::delay(500);
 
 	drive_for(-350);
-	set_intake(100);
 	pros::delay(200);
+	lower_latch();
+	set_intake(100);
 	turn_to_angle(-20);
 	pros::delay(400);
+	raise_latch();
 	drive_for(1500);
 	
 	pros::delay(500);
@@ -92,8 +91,6 @@ void right_auton(void) {
 	pros::delay(500);
 	drive_for(-200);
 	close_wings();
-
-	run_intake_auton.suspend();
 }
 
 void skills(void) {
@@ -102,17 +99,18 @@ void skills(void) {
 	turn_to_angle(135, 2, 1.5, 2);
 	
 	drive_for(850, 1.0);
+	
 	turn_to_angle(90, 1, 1.5, 2);
 	push(500);
 	
 	drive_for(-50);
 	turn_to_angle(120, 1, 2, 2);
-	turn_to_angle(25, 2);
-	turn_to_angle(18, 0, 2, 2.5);
+	turn_to_angle(30, 2);
+	turn_to_angle(20, 0, 4, 3);
 
-	//start_puncher();
-	//pros::delay(35000);
-	//stop_puncher();
+	start_puncher();
+	pros::delay(32000);
+	stop_puncher();
 	
 	turn_to_angle(-45, 1);
 	drive_for(750);
@@ -123,17 +121,18 @@ void skills(void) {
 	drive_for(2400);
 	raise_latch();
 
-	turn_to_angle(35, 2, 2, 2);
+	turn_to_angle(35, 2, 3, 3);
 
 	open_wings();
-	drive_for(700, 1);
+	drive_for(800, 1);
 	close_wings();
-	turn_to_angle(90, 2, 2);
+	turn_to_angle(90, 2, 3, 3);
 	push(700, 700);
 	drive_for(-200);
 
-	turn_to_angle(165, 0, 0.9, 0.9);
-	drive_for(1300, 1.5);
+	turn_to_angle(155, 0, 1, 1);
+	pros::delay(200);
+	drive_for(1500, 3);
 	open_wings();
 
 	turn_to_angle(90);
