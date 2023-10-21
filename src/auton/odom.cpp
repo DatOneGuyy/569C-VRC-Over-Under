@@ -3,6 +3,7 @@
 using namespace okapi;
 
 double final_speed = 0.6;
+double initial_angle;
 
 void start_odom(double initial_x, double initial_y, double angle) {
     /*
@@ -11,12 +12,15 @@ void start_odom(double initial_x, double initial_y, double angle) {
     2.75" tracking wheels, 11.5" track width, 3" offset from tracking center
     */
     chassis_l.setPose(initial_y, initial_x, -angle * pi / 180, true);
-    inertial2.set_rotation(angle);
-    inertial3.set_rotation(angle);
+    initial_angle = angle;
     left_drive_o.setBrakeMode(AbstractMotor::brakeMode::hold);
     right_drive_o.setBrakeMode(AbstractMotor::brakeMode::hold);
 
     final_speed = 0; //Default starting speed target for initial slew rate
+}
+
+double get_angle() {
+    return (inertial1_o.get() + inertial2_o.get() + inertial3_o.get()) / -3 + initial_angle;
 }
 
 void drive_to(double target_x, double target_y, double target_speed, bool backwards, double threshold, double kp_angle, double angle_threshold) {    
@@ -207,21 +211,19 @@ void push(double time, double time2, double reverse) {
         left_drive.move_voltage(0);
         right_drive.move_voltage(0);
     } else {
-        left_drive.move_voltage(-12000);
-        right_drive.move_voltage(-12000);
-        pros::delay(reverse);
+        drive_for(-reverse);
         left_drive.move_voltage(12000);
         right_drive.move_voltage(12000);
         pros::delay(time2);
-        left_drive.move_voltage(0);
-        right_drive.move_voltage(0);
+        left_drive.move_velocity(0);
+        right_drive.move_velocity(0);
     }
 }
 
 void turn_to_angle(double angle, int swing, double kp, double slew_rate, double threshold, int timeout) {
 	double target = angle; //target angle
     
-	double position = transform_angle(-chassis_l.getPose(false).theta, false); //get current angle, inverted so counterclockwise is positive
+	double position = get_angle(); //get current angle, inverted so counterclockwise is positive
 	double error = target - position;
     double power = 0; //output power
 
@@ -232,7 +234,7 @@ void turn_to_angle(double angle, int swing, double kp, double slew_rate, double 
 	int step = 10; //delay between each loop iteration
 	
 	while (slew_count * step < timeout && fabs(error) > threshold) {
-		position = transform_angle(-chassis_l.getPose(false).theta, false); //update position, error, power
+		position = get_angle(); //update position, error, power
 		error = target - position;
 		power = kp * error;
 		power = slew(slew_rate, slew_count, power, 45); //slew, start at 35, increase by input slew rate every 10ms
@@ -280,7 +282,7 @@ void drive_to_point(double x, double y, double slew_rate[], double threshold[], 
     drive_for(distance, slew_rate[1], threshold[1], timeout[1]);
 }
 
-void drive_for(double distance, double slew_rate, double threshold, int timeout) {
+void drive_for(double distance, double slew_rate, double kp, double threshold, int timeout) {
     //calculate target
     left_tracker.reset();
 
@@ -289,14 +291,13 @@ void drive_for(double distance, double slew_rate, double threshold, int timeout)
 	double position = 0; 
 	double error = target - position;
     double power = 0; //output power
-	double kp = 0.7; //proportional constant
 
 	double past_error = 0; //used for derivative term
 	double kd = 0.3;
 
-    double angle_initial = -chassis_l.getPose(false).theta;
+    double angle_initial = get_angle();
     double error_angle = 0;
-    double kg = 0;
+    double kg = 1;
 
 	int slew_count = 0; //slew counter for acceleration control and timing
 	int step = 10; //delay between each loop iteration
@@ -305,21 +306,21 @@ void drive_for(double distance, double slew_rate, double threshold, int timeout)
 	while (slew_count * step < timeout && fabs(error) > threshold) {
 		position = left_tracker.get_value(); //update position, error, power
 		error = target - position;
-        error_angle = -chassis_l.getPose(false).theta - angle_initial;
+        error_angle = get_angle() - angle_initial;
 		power = kp * error;
 		power = slew(slew_rate, slew_count, power, 45); //slew, start at 35, increase by input slew rate every 10ms
 		power = power + kd * (error - past_error); //
-		power = c(-80, 80, power);
+		power = c(-20, 80, fabs(power)) * sign(power);
 
-        left_drive.move_voltage(ptv(power - kg * error_angle * error / distance));
-        right_drive.move_voltage(ptv(power + kg * error_angle * error / distance));
+        left_drive.move_voltage(ptv(power + kg * error_angle * error / distance));
+        right_drive.move_voltage(ptv(power - kg * error_angle * error / distance));
 
 		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f", position);
 		pros::screen::print(TEXT_MEDIUM, 1, "Error: %f", error);
 		pros::screen::print(TEXT_MEDIUM, 2, "Angle error: %f", error_angle);
 		pros::screen::print(TEXT_MEDIUM, 3, "Power: %f", power);
         pros::screen::print(TEXT_MEDIUM, 4, "Target: %f", target);
-        pros::screen::print(TEXT_MEDIUM, 5, "Angle: %f", -chassis_l.getPose(false).theta);
+        pros::screen::print(TEXT_MEDIUM, 5, "Angle: %f", get_angle());
         pros::screen::print(TEXT_MEDIUM, 6, "Initial: %f", angle_initial);
         pros::screen::print(TEXT_MEDIUM, 7, "Past error: %f, Error: %f", past_error, error);
         pros::screen::print(TEXT_MEDIUM, 8, "Slew count: %d", slew_count);
@@ -336,4 +337,15 @@ void drive_for(double distance, double slew_rate, double threshold, int timeout)
     
     left_drive.move_velocity(0);
     right_drive.move_velocity(0);
+}
+
+void report_angle(void*) {
+    Controller controller;
+    while (true) {
+        controller.setText(0, 0, std::to_string(get_angle()));
+        controller.setText(1, 0, std::to_string(inertial1_o.get()));
+        controller.setText(2, 0, std::to_string(inertial2_o.get()));
+        controller.setText(3, 0, std::to_string(inertial3_o.get()));
+        pros::delay(100);
+    }
 }

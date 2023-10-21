@@ -8,7 +8,7 @@ pros::Motor left1(4, MOTOR_GEARSET_06, false);
 pros::Motor left2(20, MOTOR_GEARSET_06, false);
 pros::Motor left3(18, MOTOR_GEARSET_06, false);
 pros::Motor right1(-3, MOTOR_GEARSET_06, true);
-pros::Motor right2(-12, MOTOR_GEARSET_06, true);
+pros::Motor right2(-13, MOTOR_GEARSET_06, true);
 pros::Motor right3(-14, MOTOR_GEARSET_06, true);
 
 Motor intake(5);
@@ -18,7 +18,7 @@ pros::MotorGroup left_drive({left1, left2, left3});
 pros::MotorGroup right_drive({right1, right2, right3});
 
 MotorGroup left_drive_o({4, 20, 18});
-MotorGroup right_drive_o({-3, -12, -14});
+MotorGroup right_drive_o({-3, -13, -14});
 
 pros::IMU inertial1(7);
 pros::IMU inertial2(10);

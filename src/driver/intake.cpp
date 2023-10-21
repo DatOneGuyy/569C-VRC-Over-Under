@@ -5,6 +5,7 @@ using namespace okapi;
 void intake_task(void*) {
     ControllerButton R1(ControllerDigital::R1);
     ControllerButton R2(ControllerDigital::R2);
+    ControllerButton RIGHT(ControllerDigital::right);
 
     bool triball = false;
     int counter = 0;
@@ -30,10 +31,14 @@ void intake_task(void*) {
             }
         }
 
-        if (intake_speed > 0 && intake.getActualVelocity() < 5 && !triball && counter > 250) {
+        if (intake_speed > 0 && intake.getActualVelocity() < 10 && !triball && counter > 50) {
             triball = true;
             counter = 0;
             set_intake(0);
+        }
+
+        if (RIGHT.changedToPressed()) {
+            set_intake(-100);
         }
 
         counter++;

@@ -13,9 +13,11 @@ bool driving = false;
  * to keep execution time for this mode under a few seconds.
  */
 void initialize(void) {
-	inertial2.reset();
-	inertial3.reset();
 	chassis_l.calibrate();
+	inertial1_o.calibrate();
+	inertial2_o.calibrate();
+	inertial3_o.calibrate();
+	pros::Task report_angle_task(report_angle);
 }
 
 /**
@@ -48,7 +50,7 @@ void competition_initialize(void) {}
  * from where it left off.
  */
 void autonomous(void) {
-	program = 1;
+	program = 2;
 
 	driving = false;
 
@@ -85,6 +87,10 @@ void opcontrol(void) {
 	pros::Task run_latch(latch_task);
 	pros::Task run_intake(intake_task);
 	pros::Task run_puncher(puncher_task);
+
+	lower_latch();
+	pros::delay(500);
+	raise_latch();
 
 	while (true) {
 		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f, %f", chassis_l.getPose(true).y, chassis_l.getPose(true).x);
