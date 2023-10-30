@@ -30,6 +30,7 @@ IMU inertial3_o(16);
 
 pros::ADIPort wings('A', ADI_DIGITAL_OUT);
 pros::ADIPort latch('B', ADI_DIGITAL_OUT);
+okapi::Potentiometer auton_selector('H');
 
 pros::ADIEncoder left_tracker('C', 'D', false);
 pros::ADIEncoder back_tracker('E', 'F', false);
@@ -53,7 +54,7 @@ lemlib::OdomSensors_t sensors {
 	&inertial1
 };
 
-lemlib::ChassisController_t lateralController {4, 2.5, 1, 100, 3, 500, 5};
-lemlib::ChassisController_t angularController {0.3, 1.0, 1, 100, 3, 500, 5};
+lemlib::ChassisController_t lateralController {4, 0, 1, 100, 3, 500, 5};
+lemlib::ChassisController_t angularController {2, 8, 1, 100, 3, 500, 5};
 
 lemlib::Chassis chassis_l(drivetrain, lateralController, angularController, sensors);

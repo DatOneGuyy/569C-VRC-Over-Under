@@ -50,7 +50,13 @@ void competition_initialize(void) {}
  * from where it left off.
  */
 void autonomous(void) {
-	program = 2;
+	if (auton_selector.get() < 30) {
+		program = 0;
+	} else if (auton_selector.get() < 500) {
+		program = 1;
+	} else {
+		program = 2;
+	}
 
 	driving = false;
 

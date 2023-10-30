@@ -235,7 +235,7 @@ void turn_to_angle(double angle, int swing, double kp, double slew_rate, double 
 	
 	while (slew_count * step < timeout && fabs(error) > threshold) {
 		position = get_angle(); //update position, error, power
-		error = target - position;
+		error = transform_angle(target - position, false);
 		power = kp * error;
 		power = slew(slew_rate, slew_count, power, 45); //slew, start at 35, increase by input slew rate every 10ms
 		power = power + kd * (error - past_error); 
@@ -297,7 +297,7 @@ void drive_for(double distance, double slew_rate, double kp, double threshold, i
 
     double angle_initial = get_angle();
     double error_angle = 0;
-    double kg = 1;
+    double kg = 0;
 
 	int slew_count = 0; //slew counter for acceleration control and timing
 	int step = 10; //delay between each loop iteration
@@ -310,7 +310,7 @@ void drive_for(double distance, double slew_rate, double kp, double threshold, i
 		power = kp * error;
 		power = slew(slew_rate, slew_count, power, 45); //slew, start at 35, increase by input slew rate every 10ms
 		power = power + kd * (error - past_error); //
-		power = c(-20, 80, fabs(power)) * sign(power);
+		power = c(-10, 80, fabs(power)) * sign(power);
 
         left_drive.move_voltage(ptv(power + kg * error_angle * error / distance));
         right_drive.move_voltage(ptv(power - kg * error_angle * error / distance));

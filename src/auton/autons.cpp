@@ -7,43 +7,97 @@ void left_auton(void) {
 	start_odom(0, 0, 135);
 	
 	//intake ball and drive forward
-	drive_for(650);
+	drive_for(450);
+	pros::delay(200);
 	turn_to_angle(90, 1);
 
 	//score preload
-	drive_for(520, 4);
+	drive_for(400, 0.5);
 
 	//turn around
 	drive_for(-200);
-	turn_to_angle(-70);
+	turn_to_angle(-70, 0);
 	
 	pros::delay(200);
 
 	//remove match load ball
-	drive_for(130);
-	turn_to_angle(-50, 2);
+	drive_for(100);
+	turn_to_angle(-45, 0);
 	open_wings();
 	pros::delay(200);
-	drive_for(220);
+	drive_for(350);
 
 	//push ball to offensive zone
 	pros::delay(200);
-	turn_to_angle(-15, 0, 1.5, 1.5);
+	turn_to_angle(-10, 0, 2);
 	close_wings();
-	turn_to_angle(-50);
-	set_intake(80);
-	drive_for(350);
-	pros::delay(200);
-	turn_to_angle(0, 0, 1.5, 1.5);
+	turn_to_angle(-45);
 	lower_latch();
+	set_intake(80);
+	drive_for(200);
+	turn_to_angle(-15);
 	pros::delay(200);
 	set_intake(-100);
-	drive_for(1150, 0.5);
+	drive_for(900);
 	set_intake(0);
 	raise_latch();
 }
 
 void right_auton(void) {
+	/*
+	start_odom(0, 0, -135);
+
+	open_wings();
+	drive_for(300);
+
+	close_wings();
+	drive_for(150);
+	pros::delay(200);
+	turn_to_angle(-90, 2);
+	pros::delay(200);
+
+	push(700);
+	pros::delay(200);
+	
+	drive_for(-300);
+	pros::delay(200);
+	set_intake(100);
+	turn_to_angle(-30);
+	pros::delay(400);
+	
+	lower_latch();
+	drive_for(1500);
+	raise_latch();
+	
+	pros::delay(500);
+	drive_for(-200);
+	pros::delay(200);
+	turn_to_angle(-135);
+	set_intake(-70);
+	pros::delay(500);
+	
+	turn_to_angle(-70);
+	pros::delay(200);
+	set_intake(100);
+	drive_for(850, 0.8, 0.3);
+	pros::delay(200);
+
+	drive_for(-100);
+	pros::delay(200);
+	turn_to_angle(-170);
+	open_wings();
+	pros::delay(200);
+	set_intake(-100);
+	pros::delay(300);
+	set_intake(0);
+	drive_for(1100, 3);
+
+	set_intake(0);
+	pros::delay(500);
+	drive_for(-200);
+	close_wings();
+	*/
+	
 	start_odom(0, 0, -135);
 	
 	lower_latch();
@@ -61,21 +115,21 @@ void right_auton(void) {
 	drive_for(-300);
 	pros::delay(200);
 	set_intake(100);
-	turn_to_angle(-18);
+	turn_to_angle(-22);
 	pros::delay(400);
-	drive_for(1600);
+	drive_for(1700);
 	
 	pros::delay(500);
 	drive_for(-300);
 	pros::delay(200);
-	turn_to_angle(-135);
-	set_intake(-60);
+	turn_to_angle(-130);
+	set_intake(-100);
 	pros::delay(500);
 	
 	turn_to_angle(-60);
 	pros::delay(200);
 	set_intake(100);
-	drive_for(900, 0.8, 0.3);
+	drive_for(850, 0.8, 0.3);
 	pros::delay(200);
 
 	drive_for(-100);
@@ -86,7 +140,7 @@ void right_auton(void) {
 	set_intake(-100);
 	pros::delay(300);
 	set_intake(0);
-	drive_for(900, 1.5);
+	drive_for(1000, 4);
 
 	set_intake(0);
 	pros::delay(500);
@@ -95,6 +149,7 @@ void right_auton(void) {
 }
 
 void skills(void) {
+	/*
 	start_odom(0, 0, 90);
 
 	turn_to_angle(135, 2, 1.5, 2);
@@ -166,7 +221,11 @@ void skills(void) {
 	push(600, 800, 500);
 	drive_for(-200);
 	set_intake(0);
-	
+	*/
+
+	start_odom(0, 0, 0);
+	chassis_l.moveTo(10, 10, 3000);
+	chassis_l.moveTo(20, 30, 3000);
 
 	/*
 	turn_to_angle(90);
