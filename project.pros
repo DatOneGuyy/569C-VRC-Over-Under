@@ -5,7 +5,7 @@
         "target": "v5",
         "templates": {
             "LemLib": {
-                "location": "C:\\Users\\compu\\AppData\\Roaming\\PROS\\templates\\LemLib@0.4.6",
+                "location": "C:\\Users\\compu\\AppData\\Roaming\\PROS\\templates\\LemLib@0.5.0-beta1",
                 "metadata": {
                     "origin": "local"
                 },
@@ -14,18 +14,20 @@
                 "supported_kernels": "^3.8.0",
                 "system_files": [
                     "include\\lemlib\\logger.hpp",
-                    "include\\lemlib\\pose.hpp",
-                    "include\\lemlib\\api.hpp",
-                    "include\\lemlib\\util.hpp",
-                    "include\\lemlib\\chassis\\trackingWheel.hpp",
-                    "include\\lemlib\\chassis\\odom.hpp",
-                    "include\\lemlib\\pid.hpp",
                     "include\\lemlib\\chassis\\chassis.hpp",
-                    "firmware\\LemLib.a"
+                    "include\\lemlib\\pid.hpp",
+                    "firmware\\LemLib.a",
+                    "include\\lemlib\\chassis\\odom.hpp",
+                    "include\\lemlib\\util.hpp",
+                    "include\\lemlib\\pose.hpp",
+                    "firmware\\asset.mk",
+                    "include\\lemlib\\asset.hpp",
+                    "include\\lemlib\\chassis\\trackingWheel.hpp",
+                    "include\\lemlib\\api.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "0.4.6"
+                "version": "0.5.0-beta1"
             },
             "kernel": {
                 "location": "C:\\Users\\compu\\AppData\\Roaming\\PROS\\templates\\kernel@3.8.0",

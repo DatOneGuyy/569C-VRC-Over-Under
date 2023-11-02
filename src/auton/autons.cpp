@@ -7,40 +7,30 @@ void left_auton(void) {
 	start_odom(0, 0, 135);
 	
 	//intake ball and drive forward
-	drive_for(450);
+	drive_for(350, 0.8, 0.3);
 	pros::delay(200);
 	turn_to_angle(90, 1);
 
-	//score preload
-	drive_for(400, 0.5);
+	drive_for(300);
 
 	//turn around
-	drive_for(-200);
-	turn_to_angle(-70, 0);
+	drive_for(-80, 0.4, 0.4);
+	turn_to_angle(-60, 0);
 	
 	pros::delay(200);
 
 	//remove match load ball
-	drive_for(100);
-	turn_to_angle(-45, 0);
+	
 	open_wings();
-	pros::delay(200);
-	drive_for(350);
+	drive_for(350, 0.4, 0.4);
+	turn_to_angle(-10, 0, 1, 2);
+	
 
 	//push ball to offensive zone
 	pros::delay(200);
-	turn_to_angle(-10, 0, 2);
+	
 	close_wings();
-	turn_to_angle(-45);
-	lower_latch();
-	set_intake(80);
-	drive_for(200);
-	turn_to_angle(-15);
-	pros::delay(200);
-	set_intake(-100);
-	drive_for(900);
-	set_intake(0);
-	raise_latch();
+	drive_for(1000, 0.4);
 }
 
 void right_auton(void) {
@@ -149,12 +139,12 @@ void right_auton(void) {
 }
 
 void skills(void) {
-	/*
+	
 	start_odom(0, 0, 90);
 
 	turn_to_angle(135, 2, 1.5, 2);
 	
-	drive_for(800, 0.8);
+	drive_for(1100);
 	
 	turn_to_angle(90, 1, 2, 2);
 	push(500);
@@ -165,7 +155,7 @@ void skills(void) {
 	turn_to_angle(27, 0, 4, 3);
 
 	start_puncher();
-	pros::delay(32000);
+	pros::delay(000);
 	stop_puncher();
 	
 	turn_to_angle(-45, 1);
@@ -221,37 +211,34 @@ void skills(void) {
 	push(600, 800, 500);
 	drive_for(-200);
 	set_intake(0);
-	*/
-
-	start_odom(0, 0, 0);
-	chassis_l.moveTo(10, 10, 3000);
-	chassis_l.moveTo(20, 30, 3000);
-
+	
 	/*
-	turn_to_angle(90);
-	drive_for(-400, 2.5, 2);
-	pros::delay(400);
-	chassis_l.setPose(chassis_l.getPose().rotate(90 - chassis_l.getPose().theta));
-
-	drive_for(500);
-	turn_to_angle(180, 2, 2);
-	drive_for(500);
-	turn_to_angle(90, 1, 2);
-	drive_for(400);
-
-	open_wings();
-	turn_to_angle(0, 1);
-	drive_for(1100, 2.0);
-	close_wings();
-
-	drive_for(-300);
-	turn_to_angle(-90, 2);
-	drive_for(-400);
-	turn_to_angle(0, 1);
-	drive_for(-400, 4);
-	chassis_l.setPose(chassis_l.getPose().rotate(90 - chassis_l.getPose().theta));
-	open_wings();
-	drive_for(1000, 2.0);
-	drive_for(-300);
+	start_odom(0, 0, 0);
+	chassis_l.moveTo(-15, 17, 0, 3000, false, true, 0.6, 0.1, 200);
+	push(400);
+	
+	chassis_l.moveTo(-7, 12, -30, 3000, false, false, 0.6, 0.1, 200);
+	pros::delay(200);
+	chassis_l.turnTo(75, 40, 1000, false, false, 200);
+	drive_for(-100);
+	start_puncher();
+	pros::delay(1000);
+	stop_puncher();
+	lower_latch();
+	chassis_l.moveTo(0, -5, 90, 3000, false, true, 0.6, 0.1, 200);
+	raise_latch();
+	chassis_l.moveTo(30, -5, 90, 5000, false,true, 0.6, 0.1, 200);
+	//open_wings();
+	chassis_l.moveTo(30, 10, 0, 4000, false, true, 0.6, 0.1, 200);
+	chassis_l.moveTo(15, 15, -70, 4000, false, true, 0.6, 0.1, 200);
+	chassis_l.moveTo(10, 25, 0, 3000, false, true, 0.6, 0.1, 200);
+	chassis_l.turnTo(80, 25, 1500, false, false, 200);
+	push(800, 500, 400, 500);
+	chassis_l.turnTo(10, 70, 3000, false, false, 200);
+	//chassis_l.turnTo(30, 95, 2000, false, false, 200);
+	lower_latch();
+	//chassis_l.moveTo(40, 45, -90, 2000, false, false, 0.6, 0.1, 200);
+	//chassis_l.moveTo(40, 90, 0, 2000, false, true, 0.6, 0.1, 200);
+	//push(800, 500);
 	*/
 }

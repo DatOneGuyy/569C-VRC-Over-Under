@@ -168,6 +168,8 @@ void turn_to(double x, double y, double slew_rate, double threshold, int timeout
 	double past_error = 0; //used for derivative term
 	double kd = 5;
 
+    double abort = 0;
+
 	int slew_count = 0; //slew counter for acceleration control and timing
 	int step = 10; //delay between each loop iteration
 	
@@ -190,6 +192,12 @@ void turn_to(double x, double y, double slew_rate, double threshold, int timeout
         pros::screen::print(TEXT_MEDIUM, 3, "Target: %f", target);
 
         if (past_error == error && slew_count > 30) {
+            abort++;
+        } else {
+            abort = 0;
+        }
+
+        if (abort > 5) {
             break;
         }
 
@@ -203,7 +211,7 @@ void turn_to(double x, double y, double slew_rate, double threshold, int timeout
     right_drive.move_velocity(0);
 }
 
-void push(double time, double time2, double reverse) {
+void push(double time, double time2, double reverse, double reverse2) {
     left_drive.move_voltage(12000);
     right_drive.move_voltage(12000);
     pros::delay(time);
@@ -217,6 +225,14 @@ void push(double time, double time2, double reverse) {
         pros::delay(time2);
         left_drive.move_velocity(0);
         right_drive.move_velocity(0);
+        pros::delay(200);
+        if (reverse2 != 0) {
+            left_drive.move_voltage(-8000);
+            right_drive.move_voltage(-8000);
+            pros::delay(reverse2);
+            left_drive.move_velocity(0);
+            right_drive.move_velocity(0);
+        }
     }
 }
 
@@ -299,8 +315,10 @@ void drive_for(double distance, double slew_rate, double kp, double threshold, i
     double error_angle = 0;
     double kg = 0;
 
+    int abort = 0;
+
 	int slew_count = 0; //slew counter for acceleration control and timing
-	int step = 10; //delay between each loop iteration
+	int step = 11; //delay between each loop iteration
 	int threshold_count = 0; //counter for exiting once within the target threshold for a certain period of time
 
 	while (slew_count * step < timeout && fabs(error) > threshold) {
@@ -326,6 +344,10 @@ void drive_for(double distance, double slew_rate, double kp, double threshold, i
         pros::screen::print(TEXT_MEDIUM, 8, "Slew count: %d", slew_count);
         
         if (past_error == error && slew_count > 30) {
+            abort++;
+        }
+
+        if (abort > 10) {
             break;
         }
 
@@ -343,9 +365,7 @@ void report_angle(void*) {
     Controller controller;
     while (true) {
         controller.setText(0, 0, std::to_string(get_angle()));
-        controller.setText(1, 0, std::to_string(inertial1_o.get()));
-        controller.setText(2, 0, std::to_string(inertial2_o.get()));
-        controller.setText(3, 0, std::to_string(inertial3_o.get()));
+        //controller.setText(0, 0, "x:" + std::to_string((int)round(chassis_l.getPose().x)) + " y: " + std::to_string((int)round(chassis_l.getPose().y)) + " a: " + std::to_string((int)round(chassis_l.getPose().theta)) + "                     ");
         pros::delay(100);
     }
 }

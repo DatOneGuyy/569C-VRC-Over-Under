@@ -43,7 +43,7 @@ lemlib::Drivetrain_t drivetrain {
 	600
 };
 
-lemlib::TrackingWheel left_tracking_wheel(&left_tracker, 2.75, -center_radius);
+lemlib::TrackingWheel left_tracking_wheel(&left_tracker, 2.75, center_radius);
 lemlib::TrackingWheel back_tracking_wheel(&back_tracker, 2.75, 0);
 
 lemlib::OdomSensors_t sensors {
@@ -54,7 +54,7 @@ lemlib::OdomSensors_t sensors {
 	&inertial1
 };
 
-lemlib::ChassisController_t lateralController {4, 0, 1, 100, 3, 500, 5};
-lemlib::ChassisController_t angularController {2, 8, 1, 100, 3, 500, 5};
+lemlib::ChassisController_t lateralController {16, 1, 1, 100, 3, 500, 5};
+lemlib::ChassisController_t angularController {2, 16, 1, 100, 3, 500, 5};
 
 lemlib::Chassis chassis_l(drivetrain, lateralController, angularController, sensors);

@@ -37,7 +37,7 @@ void drive_to_point(
     double threshold = 1,
     int timeout = 3000
 );
-void push(double time, double time2 = 0, double reverse = 400);
+void push(double time, double time2 = 0, double reverse = 400, double reverse2 = 0);
 void drive_for(
     double distance,
     double slew_rate = 0.8,
