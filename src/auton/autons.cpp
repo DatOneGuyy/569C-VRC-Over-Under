@@ -33,93 +33,34 @@ void left_auton(void) {
 	drive_for(1000, 0.4);
 }
 
-void right_auton(void) {
-	/*
-	start_odom(0, 0, -135);
-
-	open_wings();
-	drive_for(300);
-
-	close_wings();
-	drive_for(150);
-	pros::delay(200);
-	turn_to_angle(-90, 2);
-	pros::delay(200);
-
-	push(700);
-	pros::delay(200);
-	
-	drive_for(-300);
-	pros::delay(200);
-	set_intake(100);
-	turn_to_angle(-30);
-	pros::delay(400);
-	
-	lower_latch();
-	drive_for(1500);
-	raise_latch();
-	
-	pros::delay(500);
-	drive_for(-200);
-	pros::delay(200);
-	turn_to_angle(-135);
-	set_intake(-70);
-	pros::delay(500);
-	
-	turn_to_angle(-70);
-	pros::delay(200);
-	set_intake(100);
-	drive_for(850, 0.8, 0.3);
-	pros::delay(200);
-
-	drive_for(-100);
-	pros::delay(200);
-	turn_to_angle(-170);
-	open_wings();
-	pros::delay(200);
-	set_intake(-100);
-	pros::delay(300);
-	set_intake(0);
-	drive_for(1100, 3);
-
-	set_intake(0);
-	pros::delay(500);
-	drive_for(-200);
-	close_wings();
-	*/
-	
+void right_auton(void) {	
 	start_odom(0, 0, -135);
 	
-	lower_latch();
-	set_intake(100);
-	drive_for(600);
-	set_intake(0);
-	raise_latch();
+	drive_for(350, 0.8, 0.3);
+	pros::delay(200);
 	turn_to_angle(-90, 2, 1.5);
 
-	close_wings();
-	set_intake(-100);
-	drive_for(500, 4);
-	pros::delay(500);
+	drive_for(300, 3);
 
-	drive_for(-300);
+	drive_for(-200);
 	pros::delay(200);
+	lower_latch();
 	set_intake(100);
-	turn_to_angle(-22);
+	turn_to_angle(-20, 0, 1, 2);
 	pros::delay(400);
-	drive_for(1700);
+	drive_for(1000);
 	
 	pros::delay(500);
-	drive_for(-300);
+	drive_for(-200);
 	pros::delay(200);
-	turn_to_angle(-130);
+	turn_to_angle(-140);
 	set_intake(-100);
 	pros::delay(500);
 	
-	turn_to_angle(-60);
+	turn_to_angle(-55);
 	pros::delay(200);
 	set_intake(100);
-	drive_for(850, 0.8, 0.3);
+	drive_for(400, 0.8, 0.3);
 	pros::delay(200);
 
 	drive_for(-100);
@@ -130,7 +71,7 @@ void right_auton(void) {
 	set_intake(-100);
 	pros::delay(300);
 	set_intake(0);
-	drive_for(1000, 4);
+	drive_for(800, 4);
 
 	set_intake(0);
 	pros::delay(500);

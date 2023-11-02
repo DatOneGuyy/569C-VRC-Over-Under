@@ -94,9 +94,16 @@ void opcontrol(void) {
 	pros::Task run_intake(intake_task);
 	pros::Task run_puncher(puncher_task);
 
-	lower_latch();
-	pros::delay(500);
-	raise_latch();
+	if (program == 2) {
+		lower_latch();
+		pros::delay(500);
+		raise_latch();
+	} else if (program == 0) {
+		pros::delay(500);
+		lower_latch();
+		pros::delay(500);
+		raise_latch();
+	}
 
 	while (true) {
 		pros::screen::print(TEXT_MEDIUM, 0, "Position: %f, %f", chassis_l.getPose(true).y, chassis_l.getPose(true).x);
