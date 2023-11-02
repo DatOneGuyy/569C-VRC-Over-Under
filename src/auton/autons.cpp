@@ -80,7 +80,7 @@ void right_auton(void) {
 }
 
 void skills(void) {
-	
+	/*
 	start_odom(0, 0, 90);
 
 	turn_to_angle(135, 2, 1.5, 2);
@@ -152,34 +152,41 @@ void skills(void) {
 	push(600, 800, 500);
 	drive_for(-200);
 	set_intake(0);
+	*/
 	
-	/*
 	start_odom(0, 0, 0);
-	chassis_l.moveTo(-15, 17, 0, 3000, false, true, 0.6, 0.1, 200);
+	chassis_l.moveTo(-12, 17, 0, 3000, false, true, 0.6, 0.1, 200);
 	push(400);
 	
-	chassis_l.moveTo(-7, 12, -30, 3000, false, false, 0.6, 0.1, 200);
+	chassis_l.moveTo(-5, 9, -30, 3000, false, false, 0.6, 0.1, 200);
 	pros::delay(200);
 	chassis_l.turnTo(75, 40, 1000, false, false, 200);
-	drive_for(-100);
-	start_puncher();
-	pros::delay(1000);
-	stop_puncher();
 	lower_latch();
-	chassis_l.moveTo(0, -5, 90, 3000, false, true, 0.6, 0.1, 200);
+	drive_for(-100, 0.4, 0.3);
 	raise_latch();
-	chassis_l.moveTo(30, -5, 90, 5000, false,true, 0.6, 0.1, 200);
+	chassis_l.moveTo(0, 0, 90, 3000, false, true, 0.6, 0.1, 200);
+	
+	chassis_l.moveTo(30, 0, 90, 5000, false,true, 0.6, 0.1, 200);
 	//open_wings();
-	chassis_l.moveTo(30, 10, 0, 4000, false, true, 0.6, 0.1, 200);
-	chassis_l.moveTo(15, 15, -70, 4000, false, true, 0.6, 0.1, 200);
-	chassis_l.moveTo(10, 25, 0, 3000, false, true, 0.6, 0.1, 200);
-	chassis_l.turnTo(80, 25, 1500, false, false, 200);
+	chassis_l.moveTo(35, 7, 0, 4000, false, true, 0.6, 0.1, 200);
+	chassis_l.moveTo(25, 10, -80, 4000, false, true, 0.6, 0.1, 200);
+	chassis_l.moveTo(15, 23, 0, 3000, false, true, 0.6, 0.1, 200);
+	chassis_l.turnTo(2000000, 23, 1500, false, false, 200);
 	push(800, 500, 400, 500);
-	chassis_l.turnTo(10, 70, 3000, false, false, 200);
-	//chassis_l.turnTo(30, 95, 2000, false, false, 200);
-	lower_latch();
+	chassis_l.turnTo(15, 700000000, 800, false, false, 200);
+	drive_for(500);
+	turn_to_angle(-130, 1);
+	push(800, 500, 400, 500);
+	turn_to_angle(-35);
+	drive_for(800);
+	turn_to_angle(45);
+	push(800, 500, 400, 0, -1);
+	//chassis_l.moveTo(15, 60, 0, 3000, false, true, 0.6, 0.1, 200);
+	//chassis_l.turnTo(50, 35, 3000, false, false, 200);
+	//push(800, 500, 400, 500);
+	//lower_latch();
 	//chassis_l.moveTo(40, 45, -90, 2000, false, false, 0.6, 0.1, 200);
 	//chassis_l.moveTo(40, 90, 0, 2000, false, true, 0.6, 0.1, 200);
 	//push(800, 500);
-	*/
+	
 }

@@ -54,7 +54,7 @@ lemlib::OdomSensors_t sensors {
 	&inertial1
 };
 
-lemlib::ChassisController_t lateralController {16, 1, 1, 100, 3, 500, 5};
+lemlib::ChassisController_t lateralController {32, 1, 1, 100, 3, 500, 5};
 lemlib::ChassisController_t angularController {2, 16, 1, 100, 3, 500, 5};
 
 lemlib::Chassis chassis_l(drivetrain, lateralController, angularController, sensors);

@@ -211,24 +211,24 @@ void turn_to(double x, double y, double slew_rate, double threshold, int timeout
     right_drive.move_velocity(0);
 }
 
-void push(double time, double time2, double reverse, double reverse2) {
-    left_drive.move_voltage(12000);
-    right_drive.move_voltage(12000);
+void push(double time, double time2, double reverse, double reverse2, double sign) {
+    left_drive.move_voltage(12000 * sign);
+    right_drive.move_voltage(12000 * sign);
     pros::delay(time);
     if (time2 == 0) {
         left_drive.move_voltage(0);
         right_drive.move_voltage(0);
     } else {
         drive_for(-reverse);
-        left_drive.move_voltage(12000);
-        right_drive.move_voltage(12000);
+        left_drive.move_voltage(12000 * sign);
+        right_drive.move_voltage(12000 * sign);
         pros::delay(time2);
         left_drive.move_velocity(0);
         right_drive.move_velocity(0);
         pros::delay(200);
         if (reverse2 != 0) {
-            left_drive.move_voltage(-8000);
-            right_drive.move_voltage(-8000);
+            left_drive.move_voltage(-8000 * sign);
+            right_drive.move_voltage(-8000 * sign);
             pros::delay(reverse2);
             left_drive.move_velocity(0);
             right_drive.move_velocity(0);
