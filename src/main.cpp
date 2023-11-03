@@ -103,6 +103,7 @@ void opcontrol(void) {
 		lower_latch();
 		pros::delay(500);
 		raise_latch();
+		set_intake(-100);
 	}
 
 	while (true) {

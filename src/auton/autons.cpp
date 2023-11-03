@@ -23,7 +23,8 @@ void left_auton(void) {
 	
 	open_wings();
 	drive_for(350, 0.4, 0.4);
-	turn_to_angle(-10, 0, 1, 2);
+	turn_to_angle(-10, 0, 1, 4);
+	turn_to_angle(0, 2, 2, 2);
 	
 
 	//push ball to offensive zone
@@ -155,32 +156,43 @@ void skills(void) {
 	*/
 	
 	start_odom(0, 0, 0);
-	chassis_l.moveTo(-12, 17, 0, 3000, false, true, 0.6, 0.1, 200);
+	chassis_l.moveTo(-12, 14, 10, 3000, false, true, 0.6, 0.1, 200);
 	push(400);
 	
-	chassis_l.moveTo(-5, 9, -30, 3000, false, false, 0.6, 0.1, 200);
+	chassis_l.moveTo(-4, 9, -40, 3000, false, false, 0.6, 0.1, 200);
 	pros::delay(200);
 	chassis_l.turnTo(75, 40, 1000, false, false, 200);
 	lower_latch();
-	drive_for(-100, 0.4, 0.3);
+	drive_for(-100, 0.4, 0.2);
+	start_puncher();
+	pros::delay(2000);
+	stop_puncher();
 	raise_latch();
-	chassis_l.moveTo(0, 0, 90, 3000, false, true, 0.6, 0.1, 200);
+	chassis_l.moveTo(0, 0, 85, 3000, false, true, 0.6, 0.1, 200);
 	
-	chassis_l.moveTo(30, 0, 90, 5000, false,true, 0.6, 0.1, 200);
+	chassis_l.moveTo(30, 3, 90, 5000, false,true, 1, 0.1, 200);
 	//open_wings();
 	chassis_l.moveTo(35, 7, 0, 4000, false, true, 0.6, 0.1, 200);
 	chassis_l.moveTo(25, 10, -80, 4000, false, true, 0.6, 0.1, 200);
-	chassis_l.moveTo(15, 23, 0, 3000, false, true, 0.6, 0.1, 200);
-	chassis_l.turnTo(2000000, 23, 1500, false, false, 200);
+	open_wings();
+	chassis_l.moveTo(18, 21, 10, 3000, false, true, 1, 0.1, 200);
+	chassis_l.turnTo(2000000, 21, 1500, false, false, 100);
 	push(800, 500, 400, 500);
-	chassis_l.turnTo(15, 700000000, 800, false, false, 200);
+	chassis_l.turnTo(18, 700000000, 800, false, false, 200);
+	
+	open_wings();
 	drive_for(500);
-	turn_to_angle(-130, 1);
-	push(800, 500, 400, 500);
-	turn_to_angle(-35);
+	turn_to_angle(-140, 1);
+	drive_for(300);
+	turn_to_angle(-90, 2);
+	push(800, 800, 400, 800);
+	turn_to_angle(-25, 2);
+	
 	drive_for(800);
-	turn_to_angle(45);
-	push(800, 500, 400, 0, -1);
+	open_wings();
+	turn_to_angle(-160, 1);
+	close_wings();
+	push(800, 500, 200, 400);
 	//chassis_l.moveTo(15, 60, 0, 3000, false, true, 0.6, 0.1, 200);
 	//chassis_l.turnTo(50, 35, 3000, false, false, 200);
 	//push(800, 500, 400, 500);

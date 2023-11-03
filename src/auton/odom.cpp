@@ -227,6 +227,7 @@ void push(double time, double time2, double reverse, double reverse2, double sig
         right_drive.move_velocity(0);
         pros::delay(200);
         if (reverse2 != 0) {
+            close_wings();
             left_drive.move_voltage(-8000 * sign);
             right_drive.move_voltage(-8000 * sign);
             pros::delay(reverse2);
