@@ -29,6 +29,7 @@ void turn_to_angle(
     double threshold = 1,
     int timeout = 3000
 );
+double get_angle();
 void drive_to_point(
     double x,
     double y,
@@ -36,10 +37,12 @@ void drive_to_point(
     double threshold = 1,
     int timeout = 3000
 );
-void push(double time, double time2 = 0, double reverse = 400);
+void push(double time, double time2 = 0, double reverse = 400, double reverse2 = 0, double sign = 1);
 void drive_for(
     double distance,
     double slew_rate = 0.8,
+    double kp = 0.7,
     double threshold = 1,
     int timeout = 3000
 );
+void report_angle(void*);

@@ -44,3 +44,5 @@ extern lemlib::ChassisController_t lateralController;
 extern lemlib::ChassisController_t angularController;
 
 extern lemlib::Chassis chassis_l;
+
+extern okapi::Potentiometer auton_selector;
