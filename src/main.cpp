@@ -99,11 +99,9 @@ void opcontrol(void) {
 		pros::delay(500);
 		raise_latch();
 	} else if (program == 0) {
-		pros::delay(500);
 		lower_latch();
 		pros::delay(500);
 		raise_latch();
-		set_intake(-100);
 	}
 
 	while (true) {

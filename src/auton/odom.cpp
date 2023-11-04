@@ -228,11 +228,7 @@ void push(double time, double time2, double reverse, double reverse2, double sig
         pros::delay(200);
         if (reverse2 != 0) {
             close_wings();
-            left_drive.move_voltage(-8000 * sign);
-            right_drive.move_voltage(-8000 * sign);
-            pros::delay(reverse2);
-            left_drive.move_velocity(0);
-            right_drive.move_velocity(0);
+            drive_for(-reverse2)
         }
     }
 }
@@ -248,7 +244,7 @@ void turn_to_angle(double angle, int swing, double kp, double slew_rate, double 
 	double kd = 0.3;
 
 	int slew_count = 0; //slew counter
-	int step = 10; //delay between each loop iteration
+	int step = 11; //delay between each loop iteration
 	
 	while (slew_count * step < timeout && fabs(error) > threshold) {
 		position = get_angle(); //update position, error, power
@@ -310,7 +306,7 @@ void drive_for(double distance, double slew_rate, double kp, double threshold, i
     double power = 0; //output power
 
 	double past_error = 0; //used for derivative term
-	double kd = 0.3;
+	double kd = 1;
 
     double angle_initial = get_angle();
     double error_angle = 0;
@@ -346,6 +342,8 @@ void drive_for(double distance, double slew_rate, double kp, double threshold, i
         
         if (past_error == error && slew_count > 30) {
             abort++;
+        } else {
+            abort = 0;
         }
 
         if (abort > 10) {
