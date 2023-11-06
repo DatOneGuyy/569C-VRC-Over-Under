@@ -2,7 +2,13 @@
 
 using namespace okapi;
 
+ASSET(left_txt);
+ASSET(preloads_txt);
+ASSET(right_txt);
+ASSET(side_txt);
+
 void left_auton(void) {
+	
 
 	start_odom(0, 0, 135);
 	
@@ -30,48 +36,42 @@ void left_auton(void) {
 	pros::delay(200);
 	
 	close_wings();
-	drive_for(1400);
-	lower_latch();
+	drive_for(1700, 0.3);
 	/**/
 }
 
 void right_auton(void) {	
 	start_odom(0, 0, -135);
 	
-	lower_latch();
 	set_intake(100);
-	drive_for(600);
-	set_intake(0);
-	raise_latch();
+	drive_for(550, 0.4);
 	turn_to_angle(-90, 2);
 
-	close_wings();
-	set_intake(-100);
-	drive_for(500, 4);
+	push(500);
 	pros::delay(500);
 
-	drive_for(-300);
+	drive_for(-350, 0.4, 0.3);
 	pros::delay(200);
 	set_intake(100);
-	turn_to_angle(-18);
+	turn_to_angle(-20);
+	
+	lower_latch();
 	pros::delay(400);
-	drive_for(1500);
+	drive_for(1600, 0.8, 0.3);
+	raise_latch();
 	
 	pros::delay(500);
-	drive_for(-300);
-	pros::delay(200);
-	turn_to_angle(-135);
-	set_intake(-60);
-	pros::delay(500);
-	
-	turn_to_angle(-50);
-	pros::delay(200);
-	set_intake(100);
-	drive_for(1000, 0.8, 0.3);
-	pros::delay(200);
-
 	drive_for(-100);
 	pros::delay(200);
+	turn_to_angle(-140);
+	set_intake(-100);
+	pros::delay(500);
+	
+	turn_to_angle(-60);
+	pros::delay(200);
+	set_intake(100);
+	drive_for(750, 0.8, 1);
+	pros::delay(500);
 	turn_to_angle(-170);
 	open_wings();
 	pros::delay(200);
@@ -131,6 +131,9 @@ void right_auton(void) {
 }
 
 void skills(void) {	
+	start_odom(-36, -60, 0);
+	chassis_l.follow(preloads_txt, 3000, 7, false, true, 100);
+	
 	start_odom(0, 0, 90);
 	turn_to_angle(135, 2, 1.5);
 	
@@ -149,7 +152,7 @@ void skills(void) {
 	turn_to_angle(23, 0, 4, 3);
 
 	start_puncher();
-	pros::delay(1000);
+	pros::delay(35000);
 	stop_puncher();
 
 	turn_to_angle(-45, 1);
@@ -162,7 +165,7 @@ void skills(void) {
 	turn_to_angle(90, 2);
 	drive_for(400);
 	turn_to_angle(180, 2);
-	drive_for(350);
+	drive_for(300);
 	turn_to_angle(90, 1, 1.5);
 	
 	open_wings();

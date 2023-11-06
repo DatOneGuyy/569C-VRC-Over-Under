@@ -228,7 +228,7 @@ void push(double time, double time2, double reverse, double reverse2, double sig
         pros::delay(200);
         if (reverse2 != 0) {
             close_wings();
-            drive_for(-reverse2)
+            drive_for(-reverse2);
         }
     }
 }
@@ -341,14 +341,8 @@ void drive_for(double distance, double slew_rate, double kp, double threshold, i
         pros::screen::print(TEXT_MEDIUM, 8, "Slew count: %d", slew_count);
         
         if (past_error == error && slew_count > 30) {
-            abort++;
-        } else {
-            abort = 0;
-        }
-
-        if (abort > 10) {
             break;
-        }
+        } 
 
 		slew_count++;
 		past_error = error;
