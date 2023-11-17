@@ -357,8 +357,8 @@ void drive_for(double distance, double slew_rate, double kp, double threshold, i
 void report_angle(void*) {
     Controller controller;
     while (true) {
-        controller.setText(0, 0, std::to_string(get_angle()));
-        //controller.setText(0, 0, "x:" + std::to_string((int)round(chassis_l.getPose().x)) + " y: " + std::to_string((int)round(chassis_l.getPose().y)) + " a: " + std::to_string((int)round(chassis_l.getPose().theta)) + "                     ");
+        //controller.setText(0, 0, std::to_string(get_angle()));
+        controller.setText(0, 0, "x:" + std::to_string((int)round(chassis_l.getPose().x)) + " y: " + std::to_string((int)round(chassis_l.getPose().y)) + " a: " + std::to_string((int)round(chassis_l.getPose().theta)) + "                     ");
         pros::delay(100);
     }
 }

@@ -18,6 +18,7 @@ void initialize(void) {
 	inertial2_o.calibrate();
 	inertial3_o.calibrate();
 	pros::Task report_angle_task(report_angle);
+	auton_selector.setLedPWM(50);
 }
 
 /**
@@ -50,15 +51,18 @@ void competition_initialize(void) {}
  * from where it left off.
  */
 void autonomous(void) {
-	if (auton_selector.get() < 30) {
-		program = 0;
-	} else if (auton_selector.get() < 500) {
-		program = 1;
-	} else {
-		program = 2;
-	}
-
+	program = 0;
 	driving = false;
+
+	if (auton_selector.getHue() > 200 && auton_selector.getHue() < 260) {
+		program = 0;
+	} else {
+		if (auton_selector.getSaturation() > 0.4) {
+			program = 1;
+		} else {
+			program = 2;
+		}
+	}
 
 	switch (program) {
 		case 0:
@@ -93,15 +97,25 @@ void opcontrol(void) {
 	pros::Task run_latch(latch_task);
 	pros::Task run_intake(intake_task);
 	pros::Task run_puncher(puncher_task);
+	pros::Task run_blocker(blocker_task);
+
+	auton_selector.setLedPWM(0);
 
 	if (program == 2) {
+		raise_blocker();
+		pros::delay(300);
 		lower_latch();
 		pros::delay(500);
 		raise_latch();
+		lower_blocker();
 	} else if (program == 0) {
+		pros::delay(300);
+		raise_blocker();
+		pros::delay(300);
 		lower_latch();
 		pros::delay(500);
 		raise_latch();
+		lower_blocker();
 	}
 
 	while (true) {
@@ -109,7 +123,8 @@ void opcontrol(void) {
 		pros::screen::print(TEXT_MEDIUM, 1, "Angle: %f deg", chassis_l.getPose(false).theta);
 		pros::screen::print(TEXT_MEDIUM, 2, "Encoder: L: %d", left_tracker.get_value());
 		pros::screen::print(TEXT_MEDIUM, 3, "Center: %d", back_tracker.get_value());
-		pros::screen::print(TEXT_MEDIUM, 4, "driving: %d", driving);
+		pros::screen::print(TEXT_MEDIUM, 4, "Saturation: %f", auton_selector.getSaturation());
+		pros::screen::print(TEXT_MEDIUM, 5, "Hue: %f", auton_selector.getHue());
 		pros::delay(100);
 	}
 }

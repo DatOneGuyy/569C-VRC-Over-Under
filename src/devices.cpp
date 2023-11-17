@@ -24,13 +24,15 @@ pros::IMU inertial1(7);
 pros::IMU inertial2(10);
 pros::IMU inertial3(16);
 
+OpticalSensor auton_selector(19);
+
 IMU inertial1_o(7);
 IMU inertial2_o(10);
 IMU inertial3_o(16);
 
 pros::ADIPort wings('A', ADI_DIGITAL_OUT);
 pros::ADIPort latch('B', ADI_DIGITAL_OUT);
-okapi::Potentiometer auton_selector('H');
+pros::ADIPort blocker('H', ADI_DIGITAL_OUT);
 
 pros::ADIEncoder left_tracker('C', 'D', false);
 pros::ADIEncoder back_tracker('E', 'F', false);
@@ -47,14 +49,14 @@ lemlib::TrackingWheel left_tracking_wheel(&left_tracker, 2.75, center_radius);
 lemlib::TrackingWheel back_tracking_wheel(&back_tracker, 2.75, 0);
 
 lemlib::OdomSensors_t sensors {
-	&left_tracking_wheel,
 	nullptr,
+	&left_tracking_wheel,
 	&back_tracking_wheel,
 	nullptr,
 	&inertial1
 };
 
-lemlib::ChassisController_t lateralController {27, 1, 1, 100, 3, 500, 5};
+lemlib::ChassisController_t lateralController {8, 1, 1, 100, 3, 500, 5};
 lemlib::ChassisController_t angularController {2, 16, 1, 100, 3, 500, 5};
 
 lemlib::Chassis chassis_l(drivetrain, lateralController, angularController, sensors);

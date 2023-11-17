@@ -18,3 +18,11 @@ void lower_latch() {
 void raise_latch() {
     latch.set_value(false);
 }
+
+void lower_blocker() {
+    blocker.set_value(false);
+}
+
+void raise_blocker() {
+    blocker.set_value(true);
+}
