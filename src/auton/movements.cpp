@@ -63,7 +63,7 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
     right_drive_o.moveVelocity(0);
 }
 
-void turn(double angle, double slew_rate, double kp, double kd, double timeout) {    
+void turn(double angle, int swing, double slew_rate, double kp, double kd, double timeout) {    
     double position = inertial1.get_rotation();
     double error = angle;
     double past_error = angle;
@@ -81,8 +81,14 @@ void turn(double angle, double slew_rate, double kp, double kd, double timeout) 
         power = slew(slew_rate, slew_count, power, 45);
         power = power + kd * (error - past_error);
 
-        left_drive_o.moveVoltage(c(-12000, 12000, ptv(power)));
-        right_drive_o.moveVoltage(c(-12000, 12000, ptv(-power)));
+        if (swing == 0) {
+            left_drive_o.moveVoltage(c(-12000, 12000, ptv(power)));
+        } else if (swing == 1) {
+            right_drive_o.moveVoltage(c(-12000, 12000, ptv(-power)));
+        } else {
+            left_drive_o.moveVoltage(c(-12000, 12000, ptv(power)));
+            right_drive_o.moveVoltage(c(-12000, 12000, ptv(-power)));
+        }
 
         if (error < 2) {
             threshold_count++;
