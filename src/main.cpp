@@ -7,7 +7,9 @@ double intake_speed = 0;
 bool driving = false;
 bool shooting = false;
 
-void initialize() {}
+void initialize() {
+    chassis_l.calibrate();
+}
 
 void disabled() {}
 
@@ -23,7 +25,7 @@ void autonomous() {
 
     if (auton_selector.get() < 30) {
         program = 0;
-    } else if (auton_selector.get() < 500) {
+    } else if (auton_selector.get() < 2500) {
         program = 1;
     } else {
         program = 2;
@@ -55,7 +57,13 @@ void opcontrol() {
     pros::Task drive_task(run_drive);
     pros::Task intake_task(run_intake);
 
-	while (true) {
+    if (program == 0) {
+        lower_latch();
+        pros::delay(500);
+        raise_latch();
+    }
+
+	while (driving) {
         if (A.changedToReleased()) {
             test();
         }

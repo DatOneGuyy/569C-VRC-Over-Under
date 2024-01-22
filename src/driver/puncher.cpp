@@ -3,15 +3,13 @@
 using namespace okapi;
 
 void run_puncher(void*) {
-    while (driving) {
+    while (true) {
         if (L2.changedToReleased()) {
             toggle_puncher();
         }
 
         puncher.moveVoltage(shooting * 12000);
-        if (program == 2) {
-            puncher_skills.moveVoltage(shooting * 12000);
-        }
+        puncher_skills.moveVoltage(shooting * 12000);
 
         pros::delay(20);
     }
