@@ -5,6 +5,8 @@ using namespace okapi;
 void drive(double distance, double slew_rate, double kp, double kd, double timeout) {
     left_drive_o.tarePosition();
     right_drive_o.tarePosition();
+    left_drive_o.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
+    right_drive_o.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
     
     double position = 0;
     double error = distance;
@@ -31,14 +33,14 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
         left_drive_o.moveVoltage(c(-12000, 12000, ptv(power - kg * angle_error)));
         right_drive_o.moveVoltage(c(-12000, 12000, ptv(power + kg * angle_error)));
 
-        if (error < 2) {
+        if (fabs(error) < 10) {
             threshold_count++;
         } else {
             threshold_count = 0;
         }
 
-        if (error == past_error) {
-            threshold_count++;
+        if (fabs(error - past_error) < 0.1) {
+            threshold_count += 2;
         } else {
             threshold_count = 0;
         }
@@ -90,14 +92,14 @@ void turn(double angle, int swing, double slew_rate, double kp, double kd, doubl
             right_drive_o.moveVoltage(c(-12000, 12000, ptv(-power)));
         }
 
-        if (error < 2) {
+        if (fabs(error) < 2) {
             threshold_count++;
         } else {
             threshold_count = 0;
         }
 
-        if (error == past_error) {
-            threshold_count += 2;
+        if (fabs(error - past_error) < 0.03) {
+            threshold_count += 3;
         } else {
             threshold_count = 0;
         }
@@ -114,6 +116,16 @@ void turn(double angle, int swing, double slew_rate, double kp, double kd, doubl
 
         pros::delay(step);
     }
+
+    left_drive_o.moveVoltage(0);
+    right_drive_o.moveVoltage(0);
+}
+
+void push(int time, double mult) {
+    left_drive_o.moveVoltage(12000 * mult);
+    right_drive_o.moveVoltage(12000 * mult);
+
+    pros::delay(time);
 
     left_drive_o.moveVelocity(0);
     right_drive_o.moveVelocity(0);
