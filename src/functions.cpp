@@ -8,6 +8,16 @@ double controller_map(double input) {
     return output * sign(input);
 }
 
+double profile(double input, int direction) {
+    if (input == 0) {
+        return direction * 0.35;
+    } else if (fabs(input) < 1) {
+        return sign(input) * fmin(10 * fabs(input) + 0.35, pow(fabs(1 - input * input), 0.5) * (-fabs(fabs(input) - 1)) / (fabs(input) - 1));
+    } else {
+        return 36.0 * (fabs(input) - 1) * -sign(input);
+    }
+}
+
 double ptv(double percent) {
 	return percent * 120;
 }

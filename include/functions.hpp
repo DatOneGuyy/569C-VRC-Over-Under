@@ -2,6 +2,7 @@
 
 double controller_map(double i);
 double ptv(double percent);
+double profile(double input, int direction);
 double c(double min, double max, double value);
 double slew(double rate, int count, double target, double base);
 double sign(double x);

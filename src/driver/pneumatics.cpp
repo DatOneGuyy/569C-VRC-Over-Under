@@ -40,7 +40,7 @@ void retract_wings() {
 
 void run_elevation(void*) {
     while (driving){
-        if (R2.changedToReleased()){
+        if (R2.changedToReleased()) {
             toggle_elevation();
         }
 
