@@ -2,7 +2,7 @@
 
 using namespace okapi;
 
-void drive(double distance, double slew_rate, double kp, double kd, double timeout) {
+void chained_drive(double distance, double slew_rate, double final_pct, double kp, double kd, double timeout) {
     left_drive_o.tarePosition();
     right_drive_o.tarePosition();
     left_drive_o.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
@@ -21,7 +21,7 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
     int step = 11;
     int threshold_count = 0;
 
-    bool flag = false;
+    double scale = 0.01 * (100 - final_pct);
 
     while (slew_count * step < timeout && threshold_count < 12) {
         position = left_drive_o.getPosition() / 2 + right_drive_o.getPosition() / 2;
@@ -32,19 +32,14 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
         power = slew(slew_rate, slew_count, power, initial_speed);
         power = c(-100, 100, power + kd * (error - past_error));
 
-        //left_drive_o.moveVoltage(c(-12000, 12000, ptv(100 * profile(sign(distance) * (1 - error / distance), sign(distance)) - kg * angle_error)));
-        //right_drive_o.moveVoltage(c(-12000, 12000, ptv(100 * profile(sign(distance) * (1 - error / distance), sign(distance)) + kg * angle_error)));
+        left_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(power - kg * angle_error * error / distance) + ptv(final_pct)));
+        right_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(power + kg * angle_error * error / distance) + ptv(final_pct)));
 
-        left_drive_o.moveVoltage(c(-12000, 12000, ptv(power - kg * angle_error * error / distance)));
-        right_drive_o.moveVoltage(c(-12000, 12000, ptv(power + kg * angle_error * error / distance)));
-
-        if (fabs(error) < 10) {
-            threshold_count++;
-        } else {
-            threshold_count = 0;
+        if (sign(error) != sign(past_error)) {
+            break;
         }
 
-        if (fabs(left_drive_o.getActualVelocity()) < 10 && fabs(right_drive_o.getActualVelocity()) < 10) {
+        if (power < 9) {
             threshold_count += 2;
         } else {
             threshold_count = 0;
@@ -63,20 +58,15 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
         pros::screen::print(TEXT_MEDIUM, 7, "Past error: %f", past_error);
         pros::screen::print(TEXT_MEDIUM, 8, "Slew count: %d", slew_count);
 
-        if (error < 0 && !flag) {
-            flag = true;
-            controller.setText(0, 0, "Angle error: " + std::to_string(angle_error));
-        }
-
         pros::delay(step);
     }
 
-    left_drive_o.moveVelocity(0);
-    right_drive_o.moveVelocity(0);
-    initial_speed = 45;
+    left_drive_o.moveVoltage(ptv(final_pct));
+    right_drive_o.moveVoltage(ptv(final_pct));
+    initial_speed = final_pct;
 }
 
-void turn(double angle, int swing, double slew_rate, double kp, double kd, double timeout) {    
+void chained_turn(double angle, int swing, double final_pct, double slew_rate, double kp, double kd, double timeout) {    
     double position = inertial1.get_rotation();
     double error = angle;
     double past_error = angle;
@@ -86,7 +76,9 @@ void turn(double angle, int swing, double slew_rate, double kp, double kd, doubl
     int step = 11;
     int threshold_count = 0;
 
-    while (slew_count * step < timeout && threshold_count < 12) {
+    double scale = 0.01 * (100 - final_pct);
+
+    while (fabs(error) > 1) {
         position = inertial1.get_rotation();
         error = angle - position;
 
@@ -95,23 +87,21 @@ void turn(double angle, int swing, double slew_rate, double kp, double kd, doubl
         power = power + kd * (error - past_error);
 
         if (swing == 0) {
-            left_drive_o.moveVoltage(c(-12000, 12000, ptv(power)));
+            left_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(power) + ptv(final_pct)));
             right_drive_o.moveVoltage(0);
         } else if (swing == 1) {
-            right_drive_o.moveVoltage(c(-12000, 12000, ptv(-power)));
+            right_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(-power) - ptv(final_pct)));
             left_drive_o.moveVoltage(0);
         } else {
             left_drive_o.moveVoltage(c(-12000, 12000, ptv(power)));
             right_drive_o.moveVoltage(c(-12000, 12000, ptv(-power)));
         }
 
-        if (fabs(error) < 10) {
-            threshold_count++;
-        } else {
-            threshold_count = 0;
+        if (sign(error) != sign(past_error)) {
+            break;
         }
 
-        if (fabs(left_drive_o.getActualVelocity()) < 3 && fabs(right_drive_o.getActualVelocity()) < 3) {
+        if (power < 5) {
             threshold_count += 3;
         } else {
             threshold_count = 0;
@@ -131,17 +121,7 @@ void turn(double angle, int swing, double slew_rate, double kp, double kd, doubl
         pros::delay(step);
     }
 
-    left_drive_o.moveVelocity(0);
-    right_drive_o.moveVelocity(0);
-    initial_speed = 45;
-}
-
-void push(int time, double mult) {
-    left_drive_o.moveVoltage(12000 * mult);
-    right_drive_o.moveVoltage(12000 * mult);
-
-    pros::delay(time);
-
-    left_drive_o.moveVelocity(0);
-    right_drive_o.moveVelocity(0);
+    left_drive_o.moveVoltage(ptv(final_pct));
+    right_drive_o.moveVoltage(ptv(final_pct));
+    initial_speed = final_pct;
 }

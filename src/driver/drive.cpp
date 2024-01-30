@@ -7,7 +7,7 @@ void run_drive(void*) {
     right_drive_o.setBrakeMode(AbstractMotor::brakeMode::brake);
     
     while (driving) {
-        left_drive_o.moveVoltage(ptv(100 * controller_map(controller.getAnalog(ControllerAnalog::leftY))));
-        right_drive_o.moveVoltage(ptv(100 * controller_map(controller.getAnalog(ControllerAnalog::rightY))));
+        left_drive_o.moveVoltage(ptv(100 * (controller.getAnalog(ControllerAnalog::leftY))));
+        right_drive_o.moveVoltage(ptv(100 * (controller.getAnalog(ControllerAnalog::rightY))));
     }
 }

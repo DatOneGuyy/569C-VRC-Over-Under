@@ -50,9 +50,12 @@
 #include "driver/intake.hpp"
 #include "auton/autons.hpp"
 #include "auton/movements.hpp"
+#include "auton/chained.hpp"
+#include "auton/curve.hpp"
 
 extern int program;
 extern double intake_speed;
+extern double initial_speed;
 extern bool driving;
 extern bool shooting;
 
