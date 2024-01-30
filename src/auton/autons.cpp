@@ -17,34 +17,6 @@ void close_auton() {
 }
 
 void far_auton() {
-    /*
-    lower_latch();
-    deploy_wings();
-    pros::delay(200);
-    retract_wings();
-    start_intake(100);
-    drive(850);
-    pros::delay(300);
-    start_intake(0);
-    turn(90);
-    start_intake(-100);
-    pros::delay(500);
-    turn(25);
-    start_intake(100);
-    drive(370);
-    turn(130);
-    start_intake(-100);
-    deploy_wings();
-    drive(600);
-    retract_wings();
-    drive(-200);
-    turn(220);
-    drive(650);
-    deploy_wings();
-    turn(60, 1);
-    stop_intake();
-    retract_wings();
-    push(500);*/
     deploy_wings();
     turn(21);
     retract_wings();
@@ -65,7 +37,6 @@ void far_auton() {
     drive(1800);
     deploy_wings();
     turn(45, 1);
-
 }
 
 void skills() {

@@ -3,6 +3,11 @@
 using namespace okapi;
 
 void curve(double distance, double mult, double slew_rate, double kp, double kd, int timeout) {
+    left_drive_o.tarePosition();
+    right_drive_o.tarePosition();
+    left_drive_o.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
+    right_drive_o.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
+
     double base_power = 0;
     double error = distance;
     double past_error = error;
@@ -48,6 +53,11 @@ void curve(double distance, double mult, double slew_rate, double kp, double kd,
 }
 
 void chained_curve(double distance, double mult, double slew_rate, double final_pct, double kp, double kd, int timeout) {
+    left_drive_o.tarePosition();
+    right_drive_o.tarePosition();
+    left_drive_o.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
+    right_drive_o.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
+    
     double base_power = 0;
     double error = distance;
     double past_error = error;
