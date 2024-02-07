@@ -1,4 +1,4 @@
-#include "main.h"
+#include "main.h"  // IWYU pragma: keep
 
 double controller_map(double input) {
     double output = 0;
@@ -34,7 +34,7 @@ double c(double min, double max, double value) {
 
 double slew(double rate, int count, double target, double base) {
 	if (fabs(base + rate * count) < fabs(target)) {
-		return (base + rate * count) * sign(target);
+		return (fabs(base) + rate * count) * sign(target);
 	} else {
 		return target;
 	}

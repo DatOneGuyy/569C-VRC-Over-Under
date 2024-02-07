@@ -34,24 +34,24 @@
  */
 #define PROS_USE_LITERALS
 
-#include "api.h"
+#include "api.h" // IWYU pragma: keep
 
 /**
  * You should add more #includes here
  */
-#include "okapi/api.hpp"
-#include "lemlib/api.hpp"
-#include "buttons.hpp"
-#include "devices.hpp"
-#include "functions.hpp"
-#include "driver/puncher.hpp"
-#include "driver/pneumatics.hpp"
-#include "driver/drive.hpp"
-#include "driver/intake.hpp"
-#include "auton/autons.hpp"
-#include "auton/movements.hpp"
-#include "auton/chained.hpp"
-#include "auton/curve.hpp"
+#include "okapi/api.hpp" // IWYU pragma: keep
+#include "lemlib/api.hpp" // IWYU pragma: keep
+#include "buttons.hpp" // IWYU pragma: keep
+#include "devices.hpp" // IWYU pragma: keep
+#include "functions.hpp" // IWYU pragma: keep
+#include "driver/puncher.hpp" // IWYU pragma: keep
+#include "driver/pneumatics.hpp" // IWYU pragma: keep
+#include "driver/drive.hpp" // IWYU pragma: keep
+#include "driver/intake.hpp" // IWYU pragma: keep
+#include "auton/autons.hpp" // IWYU pragma: keep
+#include "auton/movements.hpp" // IWYU pragma: keep
+#include "auton/chained.hpp" // IWYU pragma: keep
+#include "auton/curve.hpp" // IWYU pragma: keep
 
 extern int program;
 extern double intake_speed;

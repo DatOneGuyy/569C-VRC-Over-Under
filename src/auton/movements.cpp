@@ -20,10 +20,11 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
     int slew_count = 0;
     int step = 11;
     int threshold_count = 0;
+    int speed_count = 0;
 
     bool flag = false;
 
-    while (slew_count * step < timeout && threshold_count < 12) {
+    while (slew_count * step < timeout && threshold_count < 12 && speed_count < 10) {
         position = left_drive_o.getPosition() / 2 + right_drive_o.getPosition() / 2;
         error = distance - position;
         angle_error = inertial1.get_rotation() - angle_initial;
@@ -44,10 +45,10 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
             threshold_count = 0;
         }
 
-        if (fabs(left_drive_o.getActualVelocity()) < 10 && fabs(right_drive_o.getActualVelocity()) < 10) {
-            threshold_count += 2;
+        if (fabs(left_drive_o.getActualVelocity()) < 3 && fabs(right_drive_o.getActualVelocity()) < 3) {
+            speed_count++;
         } else {
-            threshold_count = 0;
+            speed_count = 0;
         }
 
         past_error = error;
@@ -59,9 +60,10 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
 		pros::screen::print(TEXT_MEDIUM, 3, "Power: %f", power);
         pros::screen::print(TEXT_MEDIUM, 4, "Target: %f", distance);
         pros::screen::print(TEXT_MEDIUM, 5, "Angle: %f", inertial1.get_rotation());
-        pros::screen::print(TEXT_MEDIUM, 6, "Initial: %f", angle_initial);
+        pros::screen::print(TEXT_MEDIUM, 6, "Velocities: %f, %f", left_drive_o.getActualVelocity(), right_drive_o.getActualVelocity());
         pros::screen::print(TEXT_MEDIUM, 7, "Past error: %f", past_error);
         pros::screen::print(TEXT_MEDIUM, 8, "Slew count: %d", slew_count);
+        pros::screen::print(TEXT_MEDIUM, 9, "Threshold count: %d", threshold_count);
 
         if (error < 0 && !flag) {
             flag = true;
@@ -70,6 +72,8 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
 
         pros::delay(step);
     }
+
+    pros::screen::print(TEXT_MEDIUM, 10, "Loop exited for distance %f", distance);
 
     left_drive_o.moveVelocity(0);
     right_drive_o.moveVelocity(0);
@@ -85,8 +89,9 @@ void turn(double angle, int swing, double slew_rate, double kp, double kd, doubl
     int slew_count = 0;
     int step = 11;
     int threshold_count = 0;
+    int speed_count = 0;
 
-    while (slew_count * step < timeout && threshold_count < 12) {
+    while (slew_count * step < timeout && threshold_count < 12 && speed_count < 10) {
         position = inertial1.get_rotation();
         error = angle - position;
 
@@ -112,9 +117,9 @@ void turn(double angle, int swing, double slew_rate, double kp, double kd, doubl
         }
 
         if (fabs(left_drive_o.getActualVelocity()) < 3 && fabs(right_drive_o.getActualVelocity()) < 3) {
-            threshold_count += 3;
+            speed_count++;
         } else {
-            threshold_count = 0;
+            speed_count = 0;
         }
 
         past_error = error;

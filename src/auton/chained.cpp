@@ -21,7 +21,7 @@ void chained_drive(double distance, double slew_rate, double final_pct, double k
     int step = 11;
     int threshold_count = 0;
 
-    double scale = 0.01 * (100 - final_pct);
+    double scale = 0.01 * (100 - fabs(final_pct));
 
     while (slew_count * step < timeout && threshold_count < 12) {
         position = left_drive_o.getPosition() / 2 + right_drive_o.getPosition() / 2;
@@ -76,7 +76,7 @@ void chained_turn(double angle, int swing, double final_pct, double slew_rate, d
     int step = 11;
     int threshold_count = 0;
 
-    double scale = 0.01 * (100 - final_pct);
+    double scale = 0.01 * (100 - fabs(final_pct));
 
     while (fabs(error) > 1) {
         position = inertial1.get_rotation();
@@ -90,7 +90,7 @@ void chained_turn(double angle, int swing, double final_pct, double slew_rate, d
             left_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(power) + ptv(final_pct)));
             right_drive_o.moveVoltage(0);
         } else if (swing == 1) {
-            right_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(-power) - ptv(final_pct)));
+            right_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(-power) - ptv(final_pct * sign(error))));
             left_drive_o.moveVoltage(0);
         } else {
             left_drive_o.moveVoltage(c(-12000, 12000, ptv(power)));
@@ -117,11 +117,17 @@ void chained_turn(double angle, int swing, double final_pct, double slew_rate, d
         pros::screen::print(TEXT_MEDIUM, 4, "Past error: %f", past_error);
         pros::screen::print(TEXT_MEDIUM, 5, "Slew count: %d", slew_count);
         pros::screen::print(TEXT_MEDIUM, 6, "Threshold count: %f", threshold_count);
+        pros::screen::print(TEXT_MEDIUM, 7, "output: %f", c(-12000, 12000, scale * ptv(-power) - ptv(final_pct)));
 
         pros::delay(step);
     }
-
-    left_drive_o.moveVoltage(ptv(final_pct));
-    right_drive_o.moveVoltage(ptv(final_pct));
+    
+    if (swing == 2 || swing == 0) {
+        left_drive_o.moveVoltage(ptv(final_pct));
+    }
+    
+    if (swing == 2 || swing == 1) {
+        right_drive_o.moveVoltage(ptv(final_pct));
+    }
     initial_speed = final_pct;
 }

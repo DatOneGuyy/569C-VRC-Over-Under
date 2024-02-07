@@ -14,7 +14,12 @@ void initialize() {
 
 void disabled() {}
 
-void competition_initialize() {}
+void competition_initialize() {
+    while (true) {
+        pros::screen::print(TEXT_MEDIUM, 0, "Angle: %f", inertial1.get_rotation());
+        pros::delay(20);
+    }
+}
 
 void autonomous() {
     driving = false;

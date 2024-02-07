@@ -1,53 +1,115 @@
+#include "driver/puncher.hpp"
 #include "main.h"
-
-using namespace okapi;
-
-ASSET(swerve_txt);
+#include "auton/curve.hpp"
+#include "pros/rtos.hpp"
 
 void close_auton() {
-    deploy_wings();
-    turn(-120, 1);
+    drive(1000);
+    drive(-1000);
+    drive(1000);
+    drive(-1000);
+}
+
+void auto_retract(void*) {
+    pros::delay(300);
     retract_wings();
-    pros::delay(1000);
-    turn(-270);
-    turn(-180, 0);
-    turn(-260);
-    pros::delay(4000);
-    push(20000, 0.6);
 }
 
 void far_auton() {
     deploy_wings();
-    turn(21);
-    retract_wings();
-    start_intake(100);
-    drive(3200, 3, 1, 1.5, 5000);
-    turn(135);
+    lower_latch();
+    pros::Task auto_retract_task(auto_retract);
+    start_intake();
+    curve(3600, 1.45);
+
+    turn(90);
     deploy_wings();
     start_intake(-100);
-    push(600);
+    push(700);
+
     retract_wings();
-    stop_intake();
     drive(-300);
-    turn(275);
-    start_intake(100);
-    drive(1400);
-    turn(180);
-    start_intake(-50);
-    drive(1800);
+    turn(235);
+    start_intake();
+
+    drive(1200);
+    turn(135);
+    drive(2450);
+
     deploy_wings();
-    turn(45, 1);
+    turn(30);
+    start_intake(-100);
+    retract_wings();
+    push(700);
+
+    drive(-400);
+    turn(-80);
+    curve(3000, 1.15);
+    deploy_wings();
+    turn(-60);
+
 }
 
 void skills() {
-    chained_turn(45, 0);
-    chained_drive(500);
-    chained_turn(0, 1);
-    chained_turn(-180);
-    chained_drive(500);
-    turn(-270, 1);
+    lower_latch();
+    push(700);
+    raise_latch();
+    pros::delay(200);
+
+    curve(-1100, 2.0);
+    turn(75);
+    push(500, -0.4);
+
+    start_puncher();
+    pros::delay(30000);
+    stop_puncher();
+
+    curve(2200, 1.1);
+    turn(80, 2, 4);\
+    start_intake(-100);
+    push(3000);
+    drive(-1000);
+    deploy_wings();
+    push(700);
+
+    initial_speed = -45;
+    chained_curve(-1500, 1.9, 4);
+    chained_turn(170, 1);
+    drive(-2200);
+
+    turn(160);
+    deploy_wings();
+    chained_drive(1100);
+    turn(110, 1);
+    push(1000);
+    retract_wings();
+    drive(-1000);
+    deploy_wings();
+    push(700);
+    retract_wings();
+
+    pros::delay(500);
+    drive(-1400);
+    turn(33);
+    deploy_wings();
+    chained_drive(2400);
+    retract_wings();
+    turn(150);
+    push(1000);
+    drive(-800);
+    push(700);
+   
+    curve(-1000, 2.0);
+    turn(315);
+    chained_drive(900);
+    turn(265, 1);
+
+    toggle_elevation();
+    push(1400, 0.8);
+    toggle_elevation();
 }
 
 void test() {
+    initial_speed = 45;
     drive(600, 3, 1, 1.5);
 }

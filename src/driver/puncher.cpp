@@ -1,3 +1,4 @@
+#include "devices.hpp"
 #include "main.h"
 
 using namespace okapi;
@@ -16,11 +17,13 @@ void run_puncher(void*) {
 }
 
 void start_puncher() {
-    shooting = true;
+    puncher.moveVoltage(12000);
+    puncher_skills.moveVoltage(12000);
 }
 
 void stop_puncher() {
-    shooting = false;
+    puncher.moveVoltage(0);
+    puncher_skills.moveVoltage(0);
 }
 
 void toggle_puncher() {
