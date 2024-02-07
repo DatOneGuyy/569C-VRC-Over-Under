@@ -1,4 +1,4 @@
-#include "main.h"
+#include "main.h" // IWYU pragma: keep
 
 using namespace okapi;
 
@@ -15,8 +15,8 @@ pros::MotorGroup right_drive({right1, right2, right3});
 MotorGroup left_drive_o({-4, -20, -19});
 MotorGroup right_drive_o({-3, -11, -12});
 
-Motor puncher(-10);
-Motor puncher_skills(14);
+Motor puncher(10);
+Motor puncher_skills(-14);
 
 Motor intake(-16);
 
