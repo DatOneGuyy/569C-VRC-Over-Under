@@ -3,7 +3,7 @@
 using namespace okapi;
 
 pros::Motor left1(4, MOTOR_GEARSET_06, false);
-pros::Motor left2(20, MOTOR_GEARSET_06, false);
+pros::Motor left2(18, MOTOR_GEARSET_06, false);
 pros::Motor left3(19, MOTOR_GEARSET_06, false);
 pros::Motor right1(3, MOTOR_GEARSET_06, true);
 pros::Motor right2(11, MOTOR_GEARSET_06, true);

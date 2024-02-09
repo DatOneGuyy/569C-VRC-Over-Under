@@ -26,10 +26,10 @@ void run_intake(void*) {
                 }
             }
 
-            if (intake_speed > 0 && intake.getActualVelocity() < 20 && !triball && counter > 100) {
+            if (intake_speed > 0 && intake.getActualVelocity() < 10 && !triball && counter > 100) {
                 triball = true;
                 counter = 0;
-                start_intake(30);
+                start_intake(50);
             }
 
             counter++;

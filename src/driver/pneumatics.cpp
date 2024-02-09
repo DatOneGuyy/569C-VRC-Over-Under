@@ -1,6 +1,8 @@
 #include "main.h"
 
 void run_latch(void*) {
+    lower_latch();
+
     while (driving) {
         if (UP.changedToReleased()) {
             toggle_latch();
@@ -20,6 +22,8 @@ void raise_latch() {
 }
 
 void run_wings(void*) {
+    retract_wings();
+
     while (driving) {
         if (L1.changedToReleased()) {
             toggle_wings();
@@ -32,7 +36,7 @@ void toggle_wings() {
     wings.set_value(!wings.get_value());
 }
 void deploy_wings() {
-    wings.set_value(true);
+    wings.set_value(true); 
 }
 void retract_wings() {
     wings.set_value(false);
