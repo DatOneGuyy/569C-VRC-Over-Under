@@ -1,6 +1,7 @@
 #pragma once
 
 void close_auton();
+void disruption();
 void far_auton();
 void skills();
 void test();

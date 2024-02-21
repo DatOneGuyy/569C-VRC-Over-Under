@@ -20,7 +20,7 @@ void curve(double distance, double mult, double slew_rate, double kp, double kd,
     int threshold_count = 0;
     int speed_count = 0;
 
-    while (slew_count * step < timeout && threshold_count < 12 && speed_count < 10) {
+    while (slew_count * step < timeout && threshold_count < 12 && speed_count < 5) {
         error = distance - right_drive_o.getPosition();
         base_power = kp * error;
         base_power = slew(slew_rate, slew_count, base_power, initial_speed);
@@ -44,6 +44,9 @@ void curve(double distance, double mult, double slew_rate, double kp, double kd,
 
         slew_count++;
         past_error = error;
+        pros::screen::print(TEXT_MEDIUM, 0, "Error: %f", error);
+        pros::screen::print(TEXT_MEDIUM, 1, "Power: %f, %f", left_power, right_power);
+        pros::screen::print(TEXT_MEDIUM, 2, "Base Power: %f", base_power);
         pros::delay(step);
     }
 

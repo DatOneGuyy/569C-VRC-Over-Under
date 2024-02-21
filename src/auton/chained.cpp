@@ -40,7 +40,7 @@ void chained_drive(double distance, double slew_rate, double final_pct, double k
         }
 
         if (power < 9) {
-            threshold_count += 2;
+            threshold_count += 3;
         } else {
             threshold_count = 0;
         }

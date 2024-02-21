@@ -1,9 +1,19 @@
 #include "main.h"  // IWYU pragma: keep
 
+const double e = 2.718281828459045;
+
 double controller_map(double input) {
     double output = 0;
     if (fabs(input) > 0.05) {
         output = 4 * pow(fabs(input) - 0.5, 3) + 0.5;
+    }
+    return output * sign(input);
+}
+
+double controller_map2(double input, double k) {
+    double output = 0;
+    if (fabs(input) > 0.05) {
+        output = (exp(-k * fabs(input) + 1) - e) / (exp(-k + 1) - e);
     }
     return output * sign(input);
 }

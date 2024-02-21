@@ -10,9 +10,7 @@ void run_intake(void*) {
                 if (triball) {
                     triball = false;
                     start_intake(-100);
-                    pros::delay(300);
-                    start_intake(0);
-                    pros::delay(300);
+                    pros::delay(900);
                     start_intake(100);
                     counter = 0;
                     pros::delay(300);
@@ -26,10 +24,9 @@ void run_intake(void*) {
                 }
             }
 
-            if (intake_speed > 0 && intake.getActualVelocity() < 10 && !triball && counter > 100) {
+            if (intake_speed > 0 && intake.getActualVelocity() < 10 && !triball && counter > 70) {
                 triball = true;
                 counter = 0;
-                start_intake(50);
             }
 
             counter++;

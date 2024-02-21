@@ -4,7 +4,7 @@
 using namespace okapi;
 
 void run_puncher(void*) {
-    while (true) {
+    while (driving) {
         if (L2.changedToReleased()) {
             toggle_puncher();
         }
