@@ -9,13 +9,14 @@ bool driving = false;
 bool shooting = false;
 
 void initialize() {
-    chassis_l.calibrate();
+    inertial1.reset(true);
+    controller.rumble(".");
 }
 
 void disabled() {}
 
 void competition_initialize() {
-    while (true) {
+    while (!driving) {
         pros::screen::print(TEXT_MEDIUM, 0, "Angle: %f", inertial1.get_rotation());
         pros::delay(20);
     }
@@ -38,6 +39,8 @@ void autonomous() {
     } else {
         program = 2;
     }
+
+    //program = 3;
     
     switch (program) {
         case 0:
@@ -48,6 +51,9 @@ void autonomous() {
             break;
         case 2:
             skills();
+            break;
+        case 3:
+            disruption();
             break;
     }
 }
@@ -65,10 +71,6 @@ void opcontrol() {
     pros::Task elevation_task(run_elevation);
     pros::Task drive_task(run_drive);
     pros::Task intake_task(run_intake);
-
-    if (program != 1) {
-        lower_latch();
-    }
 
 	while (driving) {
         if (pros::millis() - start > 90000 && !elevation_timer) {

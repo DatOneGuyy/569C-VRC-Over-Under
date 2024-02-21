@@ -13,7 +13,7 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
     double past_error = distance;
     double power = 0;
 
-    double kg = 4;
+    double kg = 6;
     double angle_initial = inertial1.get_rotation();
     double angle_error = 0;
     
@@ -24,7 +24,7 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
 
     bool flag = false;
 
-    while (slew_count * step < timeout && threshold_count < 12 && speed_count < 10) {
+    while (slew_count * step < timeout && threshold_count < 12 && speed_count < 5) {
         position = left_drive_o.getPosition() / 2 + right_drive_o.getPosition() / 2;
         error = distance - position;
         angle_error = inertial1.get_rotation() - angle_initial;
@@ -146,6 +146,30 @@ void push(int time, double mult) {
     right_drive_o.moveVoltage(12000 * mult);
 
     pros::delay(time);
+
+    left_drive_o.moveVelocity(0);
+    right_drive_o.moveVelocity(0);
+}
+
+void push_to_angle(double angle, double power, int timeout) {
+    int counter = 0;
+    double error, past_error;
+    
+    while (fabs(inertial1.get_rotation() - angle) > 0.3 && counter * 10 < timeout) {
+        error = inertial1.get_rotation() - angle;
+        left_drive_o.moveVoltage(ptv(power));
+        right_drive_o.moveVoltage(ptv(power));
+
+        if (sign(error) != sign(past_error)) {
+            break;
+        }
+
+        pros::screen::print(TEXT_MEDIUM, 0, "Angle: %f", inertial1.get_rotation());
+
+        past_error = error;
+        counter++;
+        pros::delay(10);
+    }
 
     left_drive_o.moveVelocity(0);
     right_drive_o.moveVelocity(0);

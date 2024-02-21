@@ -43,3 +43,12 @@ void turn(
  * @param mult Multiplier for voltage - multiplied by 12000mV
  */
 void push(int time, double mult = 1);
+
+/**
+ * @brief Reverses until target angle is reached
+ * 
+ * @param angle Target angle in degrees
+ * @param power Power to move at in percent
+ * @param timeout Milliseconds before exit
+ */
+void push_to_angle(double angle, double power = -40, int timeout = 2000);
