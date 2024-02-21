@@ -34,6 +34,7 @@ void run_intake(void*) {
             pros::delay(10);
         } else {
             start_intake(-100);
+            pros::delay(10);
         }
     }
 }

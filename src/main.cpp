@@ -30,17 +30,15 @@ void autonomous() {
     left_drive_o.setGearing(AbstractMotor::gearset::blue);
     right_drive_o.setGearing(AbstractMotor::gearset::blue);
 
-    //test();
-
     if (auton_selector.get() < 100) {
         program = 0;
+    } else if (auton_selector.get() < 2000) {
+        program = 3;
     } else if (auton_selector.get() < 4000) {
         program = 1;
     } else {
         program = 2;
     }
-
-    //program = 3;
     
     switch (program) {
         case 0:
@@ -61,7 +59,7 @@ void autonomous() {
 void opcontrol() {
     bool elevation_timer = false;
     bool warning_timer = false;
-    bool skills_autohang = true;
+    bool skills_autohang = false;
     int start = pros::millis();
     driving = true;
 
