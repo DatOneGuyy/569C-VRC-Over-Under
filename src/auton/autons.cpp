@@ -6,6 +6,8 @@
 #include "auton/curve.hpp"
 #include "pros/rtos.hpp"
 
+using namespace okapi;
+
 void auto_retract(void*) {
     pros::delay(300);
     retract_wings();
@@ -13,7 +15,7 @@ void auto_retract(void*) {
 
 void close_auton() {
     inertial1.set_rotation(45);
-    lower_latch();
+    lower_descorer();
     start_intake(100);
     pros::delay(500);
     drive(-500);
@@ -31,12 +33,12 @@ void close_auton() {
 }
 
 void delay_deploy(void*) {
-    pros::delay(300);
+    pros::delay(500);
     deploy_wings();
 }
 
 void disruption() {
-    lower_latch();
+    lower_descorer();
     start_intake(100);
     chained_curve(1800, 0.7);
     drive(-200);
@@ -59,70 +61,63 @@ void disruption() {
 }
 
 void far_auton() {
-    deploy_wings();
-    lower_latch();
-    pros::delay(400);
-    pros::Task auto_retract_task(auto_retract);
-    start_intake();
-    curve(3800, 1.55);
+    intake_deploy();
+    drive(300);
 
-    turn(90);
+    drive(-1500);
+    turn(-35, 0);
+    lower_descorer();
+    drive(-900);
+    turn(-90, 0, 5, 7);
+    raise_descorer();
+    turn(100);
+    start_intake(-100);
+    push(500);
+
+    drive(-300);
+    turn(17);
+    start_intake(100);
+    drive(2600);
+    drive(-500);
+    
+    turn(140);
+    start_intake(-100);
+    pros::delay(300);
+
+    turn(60);
+    start_intake(100);
+    drive(1300);
+    turn(180);
+
     deploy_wings();
     start_intake(-100);
     push(800);
-
-    retract_wings();
-    drive(-300);
-    turn(240);
-    start_intake();
-
-    drive(1500);
-    turn(130);
-    drive(2600);
-
-    deploy_wings();
-    turn(30);
-    retract_wings();
-    start_intake(-100);
-    pros::delay(400);
-    push(700);
-
-    drive(-400);
-    turn(-80);
-    start_intake(100);
-    curve(2700, 1.2);
-    deploy_wings();
-    turn(-60);
-    /*
-    lower_latch();
-    push(1000);
-    drive(-500);*/
+    drive(-200);
 }
 
 void skills() {
-    lower_latch();
     push(700);
-    raise_latch();
 
-    curve(-1200, 0.7);
-    turn(80);
-    push_to_angle(73, -60);
+    curve(-1000, 0.3);
+    turn(75);
+    push_to_angle(68 -30, 3500);
     
+    pros::Task intake_deploy_task(run_intake_deploy);
     start_puncher();
-    pros::delay(26000); //28
+    right_drive_o.moveVoltage(-700);
+    //push(500, -0.1);
+    pros::delay(24000); //28
     stop_puncher();
 
     turn(115);
-    drive(1300);
-    turn(95);
+    drive(1500);
+    turn(90);
     start_intake();
-    chained_drive(3800);
+    chained_drive(4500, 4, 45, 0.4);
     
-    deploy_wings();
-    turn(50, 1);
-    drive(1100);
-    turn(30);
-    retract_wings();
+    turn(70, 1);
+    drive(2000);
+    turn(15);
 
     start_intake(-100);
     push(1000);
@@ -131,43 +126,40 @@ void skills() {
     drive(-900);
     start_intake();
 
-    turn(-60);
+    turn(-70);
     pros::Task delay_deploy_task(delay_deploy);
-    chained_drive(1900);
-    turn(55);
+    chained_drive(3000);
+    turn(50, 2, 6);
     start_intake(-100);
     push(1100);
     retract_wings();
     pros::delay(300);
 
-    drive(-1600);
-    turn(-20);
+    drive(-1700);
+    turn(-25 + 360);
     start_intake();
-    drive(2300);
-    turn(120);
-    deploy_wings();
+    drive(2400);
+    pros::Task delay_deploy_task2(delay_deploy);
+    turn(120 + 360, 2, 6);
     start_intake(-100);
-    pros::delay(400);
-    push(1200);
+    push(1200, 0.8);
     retract_wings();
 
-    drive(-1900);
+    drive(-1800);
     start_intake();
-    turn(36);
-    chained_drive(3400);
-    deploy_wings();
-    turn(150);
+    turn(28 + 360);
+    drive(3700);
+    turn(145 + 360, 0, 6, 8);
     start_intake(-100);
-    retract_wings();
-    push(1500);
-    push(400, -0.7);
+    push(1200);
+    push(300, -0.7);
     push(1000);
 
     curve(-1100, 0.8);
     stop_intake();
-    turn(315);
-    drive(1000);
-    turn(265);
+    turn(315 + 360);
+    drive(1200);
+    turn(265 + 360);
     raise_elevation();
     push(1300);
     lower_elevation(); 

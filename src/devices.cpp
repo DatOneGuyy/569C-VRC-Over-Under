@@ -16,4 +16,4 @@ IMU inertial1_o(7);
 pros::ADIPort wings('E', ADI_DIGITAL_OUT);
 pros::ADIPort elevation('D', ADI_DIGITAL_OUT);
 Potentiometer auton_selector('C');
-pros::ADIPort latch('F', ADI_DIGITAL_OUT);
+pros::ADIPort descorer('F', ADI_DIGITAL_OUT);

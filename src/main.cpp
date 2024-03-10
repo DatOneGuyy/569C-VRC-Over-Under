@@ -8,16 +8,34 @@ double initial_speed = 45;
 bool driving = false;
 bool shooting = false;
 
+const double scale = 2.75 / 3.25;
+
 void initialize() {
     inertial1.reset(true);
     controller.rumble(".");
 }
 
-void disabled() {}
+void disabled() {
+    lower_elevation();
+}
 
 void competition_initialize() {
     while (!driving) {
         pros::screen::print(TEXT_MEDIUM, 0, "Angle: %f", inertial1.get_rotation());
+
+        if (auton_selector.get() < 100) {
+            pros::screen::print(TEXT_MEDIUM, 1, "Safe AWP");
+        } else if (auton_selector.get() < 1000) {
+            pros::screen::print(TEXT_MEDIUM, 1, "Disruption AWP");
+        } else if (auton_selector.get() < 2000) {
+            pros::screen::print(TEXT_MEDIUM, 1, "Disruption");
+        } else if (auton_selector.get() < 3000) {
+            pros::screen::print(TEXT_MEDIUM, 1, "Safe far WP");
+        } else if (auton_selector.get() < 4000) {
+            pros::screen::print(TEXT_MEDIUM, 1, "Safe 6 ball");
+        } else {
+            pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Skills");
+        }
         pros::delay(20);
     }
 }
@@ -32,8 +50,12 @@ void autonomous() {
 
     if (auton_selector.get() < 100) {
         program = 0;
+    } else if (auton_selector.get() < 1000) {
+        program = 4;
     } else if (auton_selector.get() < 2000) {
         program = 3;
+    } else if (auton_selector.get() < 3000) {
+        program = 5;
     } else if (auton_selector.get() < 4000) {
         program = 1;
     } else {
@@ -64,7 +86,7 @@ void opcontrol() {
     driving = true;
 
     pros::Task puncher_task(run_puncher);
-    pros::Task latch_task(run_latch);
+    pros::Task descorer_task(run_descorer);
     pros::Task wings_task(run_wings);
     pros::Task elevation_task(run_elevation);
     pros::Task drive_task(run_drive);

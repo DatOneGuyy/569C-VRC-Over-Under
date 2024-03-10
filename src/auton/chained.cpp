@@ -9,8 +9,8 @@ void chained_drive(double distance, double slew_rate, double final_pct, double k
     right_drive_o.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
     
     double position = 0;
-    double error = distance;
-    double past_error = distance;
+    double error = distance * scale;
+    double past_error = distance * scale;
     double power = 0;
 
     double kg = 4;
@@ -25,15 +25,15 @@ void chained_drive(double distance, double slew_rate, double final_pct, double k
 
     while (slew_count * step < timeout && threshold_count < 12) {
         position = left_drive_o.getPosition() / 2 + right_drive_o.getPosition() / 2;
-        error = distance - position;
+        error = distance * scale - position;
         angle_error = inertial1.get_rotation() - angle_initial;
 
         power = kp * error;
         power = slew(slew_rate, slew_count, power, initial_speed);
         power = c(-100, 100, power + kd * (error - past_error));
 
-        left_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(power - kg * angle_error * error / distance) + ptv(final_pct)));
-        right_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(power + kg * angle_error * error / distance) + ptv(final_pct)));
+        left_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(power - kg * angle_error * error / distance * scale) + ptv(final_pct)));
+        right_drive_o.moveVoltage(c(-12000, 12000, scale * ptv(power + kg * angle_error * error / distance * scale) + ptv(final_pct)));
 
         if (sign(error) != sign(past_error)) {
             break;
@@ -52,7 +52,7 @@ void chained_drive(double distance, double slew_rate, double final_pct, double k
 		pros::screen::print(TEXT_MEDIUM, 1, "Error: %f", error);
 		pros::screen::print(TEXT_MEDIUM, 2, "Angle error: %f", angle_error);
 		pros::screen::print(TEXT_MEDIUM, 3, "Power: %f", power);
-        pros::screen::print(TEXT_MEDIUM, 4, "Target: %f", distance);
+        pros::screen::print(TEXT_MEDIUM, 4, "Target: %f", distance * scale);
         pros::screen::print(TEXT_MEDIUM, 5, "Angle: %f", inertial1.get_rotation());
         pros::screen::print(TEXT_MEDIUM, 6, "Initial: %f", angle_initial);
         pros::screen::print(TEXT_MEDIUM, 7, "Past error: %f", past_error);
