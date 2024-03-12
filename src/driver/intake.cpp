@@ -67,9 +67,14 @@ void run_intake_deploy(void*) {
     intake.moveVoltage(12000);
 }
 
+void run_intake_deploy_rapid(void*) {
+    intake.moveVoltage(-12000);
+    pros::delay(500);
+    intake.moveVoltage(12000);
+}
+
 void intake_deploy() {
     intake.moveVoltage(-12000);
-    pros::delay(200);
+    pros::delay(500);
     intake.moveVoltage(12000);
-    pros::delay(300);
 }

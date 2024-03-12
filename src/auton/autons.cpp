@@ -14,9 +14,8 @@ void auto_retract(void*) {
 }
 
 void close_auton() {
+    pros::Task intake_deploy_task(run_intake_deploy);
     inertial1.set_rotation(45);
-    lower_descorer();
-    start_intake(100);
     pros::delay(500);
     drive(-500);
     deploy_wings();
@@ -24,12 +23,33 @@ void close_auton() {
     retract_wings();
     pros::delay(1000);
     turn(45);
-    drive(400);
+    drive(600);
     turn(0, 1);
     start_intake(-100);
     drive(1600);
     deploy_wings();
     turn(25);
+}
+
+void disruption_wp() {
+    pros::Task intake_deploy_task(run_intake_deploy_rapid);
+    deploy_wings();
+    drive(2400);
+    retract_wings();
+    drive(-1500);
+    turn(-143);
+    drive(1450);
+    deploy_wings();
+    turn(-300);
+    pros::delay(500);
+    retract_wings();
+    turn(-225);
+    drive(400);
+    turn(-270, 1);
+    start_intake(-100);
+    drive(1300);
+    deploy_wings();
+    turn(-245);
 }
 
 void delay_deploy(void*) {
@@ -62,32 +82,33 @@ void disruption() {
 
 void far_auton() {
     intake_deploy();
-    drive(300);
+    pros::delay(300);
+    drive(300, 6, 0.6);
 
     drive(-1500);
     turn(-35, 0);
     lower_descorer();
-    drive(-900);
-    turn(-90, 0, 5, 7);
+    drive(-1000, 6);
+    turn(-90, 2, 6);
     raise_descorer();
-    turn(100);
+    turn(110, 2, 6);
     start_intake(-100);
     push(500);
 
-    drive(-300);
-    turn(17);
+    drive(-700, 6, 0.6);
+    turn(28, 2, 6);
     start_intake(100);
-    drive(2600);
-    drive(-500);
+    drive(2400, 6, 0.6);
+    drive(-500, 6, 0.6);
     
-    turn(140);
+    turn(140, 2, 6);
     start_intake(-100);
     pros::delay(300);
 
-    turn(60);
+    turn(60, 2, 6);
     start_intake(100);
-    drive(1300);
-    turn(180);
+    drive(1300, 6, 0.6);
+    turn(180, 2, 6);
 
     deploy_wings();
     start_intake(-100);
@@ -100,7 +121,7 @@ void skills() {
 
     curve(-1000, 0.3);
     turn(75);
-    push_to_angle(68 -30, 3500);
+    push_to_angle(70, -30, 3500);
     
     pros::Task intake_deploy_task(run_intake_deploy);
     start_puncher();
@@ -148,8 +169,8 @@ void skills() {
     drive(-1800);
     start_intake();
     turn(28 + 360);
-    drive(3700);
-    turn(145 + 360, 0, 6, 8);
+    drive(3400);
+    turn(140 + 360, 2, 6, 8);
     start_intake(-100);
     push(1200);
     push(300, -0.7);
@@ -163,6 +184,12 @@ void skills() {
     raise_elevation();
     push(1300);
     lower_elevation(); 
+}
+
+void safe_far_wp() {
+    pros::Task intake_deploy_task(run_intake_deploy);
+    push(800);
+    drive(-300);
 }
 
 void test() {

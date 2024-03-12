@@ -24,17 +24,17 @@ void competition_initialize() {
         pros::screen::print(TEXT_MEDIUM, 0, "Angle: %f", inertial1.get_rotation());
 
         if (auton_selector.get() < 100) {
-            pros::screen::print(TEXT_MEDIUM, 1, "Safe AWP");
+            pros::screen::print(TEXT_MEDIUM, 1, "Safe AWP\t\t\t\t\t");
         } else if (auton_selector.get() < 1000) {
-            pros::screen::print(TEXT_MEDIUM, 1, "Disruption AWP");
+            pros::screen::print(TEXT_MEDIUM, 1, "Disruption AWP\t\t\t\t\t");
         } else if (auton_selector.get() < 2000) {
-            pros::screen::print(TEXT_MEDIUM, 1, "Disruption");
+            pros::screen::print(TEXT_MEDIUM, 1, "Disruption\t\t\t\t\t");
         } else if (auton_selector.get() < 3000) {
-            pros::screen::print(TEXT_MEDIUM, 1, "Safe far WP");
+            pros::screen::print(TEXT_MEDIUM, 1, "Safe far WP\t\t\t\t\t");
         } else if (auton_selector.get() < 4000) {
-            pros::screen::print(TEXT_MEDIUM, 1, "Safe 6 ball");
+            pros::screen::print(TEXT_MEDIUM, 1, "Safe 6 ball\t\t\t\t\t");
         } else {
-            pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Skills");
+            pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Skills\t\t\t\t\t");
         }
         pros::delay(20);
     }
@@ -75,6 +75,12 @@ void autonomous() {
         case 3:
             disruption();
             break;
+        case 4:
+            disruption_wp();
+            break;
+        case 5:
+            safe_far_wp();
+            break;
     }
 }
 
@@ -108,6 +114,10 @@ void opcontrol() {
             controller.rumble("--");
             toggle_elevation();
             skills_autohang = true;
+        }
+
+        if (DOWN.changedToReleased()) {
+            pros::Task intake_deploy_task(run_intake_deploy);
         }
 
 		pros::delay(20);
