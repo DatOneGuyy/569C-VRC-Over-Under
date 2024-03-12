@@ -1,9 +1,9 @@
 #pragma once
 
-void run_latch(void*);
-void toggle_latch();
-void lower_latch();
-void raise_latch();
+void run_descorer(void*);
+void toggle_descorer();
+void lower_descorer();
+void raise_descorer();
 
 void run_wings(void*);
 void toggle_wings();

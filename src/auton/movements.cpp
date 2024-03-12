@@ -9,8 +9,8 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
     right_drive_o.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
     
     double position = 0;
-    double error = distance;
-    double past_error = distance;
+    double error = distance * scale;
+    double past_error = distance * scale;
     double power = 0;
 
     double kg = 6;
@@ -24,20 +24,17 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
 
     bool flag = false;
 
-    while (slew_count * step < timeout && threshold_count < 12 && speed_count < 5) {
+    while (slew_count * step < timeout && threshold_count < 12 && speed_count < 3) {
         position = left_drive_o.getPosition() / 2 + right_drive_o.getPosition() / 2;
-        error = distance - position;
+        error = distance * scale - position;
         angle_error = inertial1.get_rotation() - angle_initial;
 
         power = kp * error;
         power = slew(slew_rate, slew_count, power, initial_speed);
         power = c(-100, 100, power + kd * (error - past_error));
 
-        //left_drive_o.moveVoltage(c(-12000, 12000, ptv(100 * profile(sign(distance) * (1 - error / distance), sign(distance)) - kg * angle_error)));
-        //right_drive_o.moveVoltage(c(-12000, 12000, ptv(100 * profile(sign(distance) * (1 - error / distance), sign(distance)) + kg * angle_error)));
-
-        left_drive_o.moveVoltage(c(-12000, 12000, ptv(power - kg * angle_error * error / distance)));
-        right_drive_o.moveVoltage(c(-12000, 12000, ptv(power + kg * angle_error * error / distance)));
+        left_drive_o.moveVoltage(c(-12000, 12000, ptv(power - kg * angle_error * error / distance * scale)));
+        right_drive_o.moveVoltage(c(-12000, 12000, ptv(power + kg * angle_error * error / distance * scale)));
 
         if (fabs(error) < 10) {
             threshold_count++;
@@ -58,7 +55,7 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
 		pros::screen::print(TEXT_MEDIUM, 1, "Error: %f", error);
 		pros::screen::print(TEXT_MEDIUM, 2, "Angle error: %f", angle_error);
 		pros::screen::print(TEXT_MEDIUM, 3, "Power: %f", power);
-        pros::screen::print(TEXT_MEDIUM, 4, "Target: %f", distance);
+        pros::screen::print(TEXT_MEDIUM, 4, "Target: %f", distance * scale);
         pros::screen::print(TEXT_MEDIUM, 5, "Angle: %f", inertial1.get_rotation());
         pros::screen::print(TEXT_MEDIUM, 6, "Velocities: %f, %f", left_drive_o.getActualVelocity(), right_drive_o.getActualVelocity());
         pros::screen::print(TEXT_MEDIUM, 7, "Past error: %f", past_error);
@@ -73,7 +70,7 @@ void drive(double distance, double slew_rate, double kp, double kd, double timeo
         pros::delay(step);
     }
 
-    pros::screen::print(TEXT_MEDIUM, 10, "Loop exited for distance %f", distance);
+    pros::screen::print(TEXT_MEDIUM, 10, "Loop exited for distance %f", distance * scale);
 
     left_drive_o.moveVelocity(0);
     right_drive_o.moveVelocity(0);

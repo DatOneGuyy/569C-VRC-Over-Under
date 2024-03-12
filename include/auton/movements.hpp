@@ -30,7 +30,7 @@ void drive(
 void turn(
     double angle, 
     int swing = 2, 
-    double slew_rate = 3, 
+    double slew_rate = 4, 
     double kp = 6, 
     double kd = 24, 
     double timeout = 2000

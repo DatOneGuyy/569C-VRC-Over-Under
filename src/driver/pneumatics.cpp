@@ -1,24 +1,22 @@
 #include "main.h"
 
-void run_latch(void*) {
-    lower_latch();
-
+void run_descorer(void*) {
     while (driving) {
         if (UP.changedToReleased()) {
-            toggle_latch();
+            toggle_descorer();
         }
 
         pros::delay(20);
     }
 }
-void toggle_latch() {
-    latch.set_value(!latch.get_value());
+void toggle_descorer() {
+    descorer.set_value(!descorer.get_value());
 }
-void lower_latch() {
-    latch.set_value(true);
+void lower_descorer() {
+    descorer.set_value(true);
 }
-void raise_latch() {
-    latch.set_value(false);
+void raise_descorer() {
+    descorer.set_value(false);
 }
 
 void run_wings(void*) {

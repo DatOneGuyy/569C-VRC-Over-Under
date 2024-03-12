@@ -58,6 +58,7 @@ extern double intake_speed;
 extern double initial_speed;
 extern bool driving;
 extern bool shooting;
+const extern double scale;
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do

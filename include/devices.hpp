@@ -18,4 +18,4 @@ extern pros::ADIPort wings;
 extern pros::ADIPort elevation;
 extern pros::ADIEncoder tracker;
 extern okapi::Potentiometer auton_selector;
-extern pros::ADIPort latch;
+extern pros::ADIPort descorer;

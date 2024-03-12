@@ -1,8 +1,17 @@
+#include "intake.hpp"
 #include "main.h"
 
 void run_intake(void*) {
     bool triball = false;
     int counter = 0;
+
+    if (program == 2) {
+        intake.moveVoltage(-12000);
+        pros::delay(800);
+        intake.moveVoltage(12000);
+        pros::delay(800);
+        intake.moveVoltage(-12000);
+    }
 
     while (driving) {
         if (!RIGHT.isPressed()) {
@@ -34,6 +43,7 @@ void run_intake(void*) {
             pros::delay(10);
         } else {
             start_intake(-100);
+            pros::delay(10);
         }
     }
 }
@@ -45,4 +55,26 @@ void start_intake(double pct) {
 
 void stop_intake() {
     intake.moveVoltage(0);
+}
+
+void run_intake_deploy(void*) {
+    intake.moveVoltage(-12000);
+    pros::delay(800);
+    intake.moveVoltage(12000);
+    pros::delay(800);
+    intake.moveVoltage(-12000);
+    pros::delay(800);
+    intake.moveVoltage(12000);
+}
+
+void run_intake_deploy_rapid(void*) {
+    intake.moveVoltage(-12000);
+    pros::delay(500);
+    intake.moveVoltage(12000);
+}
+
+void intake_deploy() {
+    intake.moveVoltage(-12000);
+    pros::delay(500);
+    intake.moveVoltage(12000);
 }

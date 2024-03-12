@@ -2,7 +2,7 @@
 
 void chained_drive(
     double distance, 
-    double slew_rate = 4, 
+    double slew_rate = 3, 
     double final_pct = 45,
     double kp = 0.3, 
     double kd = 1, 
